@@ -1,7 +1,11 @@
-#include "Window.h"
-#include "../Graphics/Rasterizer.h"
+#include "../Graphics/GraphicalContext.h"
 
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+// Local variables
+char pixs[4 * WIDTH * HEIGHT] = {0};
+
+// Local defines
+#define SET_PIX(X, Y, r, g, b) pixs[4 * (X + Y * HEIGHT)] = b; pixs[4 * (X + Y * HEIGHT) + 1] = g; pixs[4 * (X + Y * HEIGHT) + 2] = r;
+#define SET_PIX_CVV(X, Y, r, g, b) SET_PIX((X + WIDTH / 2), (HEIGHT / 2 - Y), r, g, b);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		LPSTR lpCmdLine, INT nCmdShow) {
@@ -29,17 +33,28 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	return (int) msg.wParam;
 }
 
-#define SET_PIX(X, Y, r, g, b) pixs[4 * (X + Y * HEIGHT)] = b; pixs[4 * (X + Y * HEIGHT) + 1] = g; pixs[4 * (X + Y * HEIGHT) + 2] = r;
-#define SET_PIX_CVV(X, Y, r, g, b) SET_PIX((X + WIDTH / 2), (HEIGHT / 2 - Y), r, g, b);
+int SetFbPixel(int x, int y, int r, int g, int b) {
+	if (x <= - WIDTH / 2 || x >= WIDTH / 2 || y <= -HEIGHT / 2 || y >= HEIGHT / 2) {
+		printf("bad coords for setfb pixel!\b");
+		exit(-1);
+	}
+	SET_PIX_CVV(x, y, r, g, b);
+	return 0;
+}
+
+void flush() {
+	for (int x = 0; x < 4*WIDTH*HEIGHT; x++){
+		pixs[x] = 0;
+	}
+}
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static HBITMAP bitmap;
-	static char pixs[4 * WIDTH * HEIGHT] = {0};
 	static int idTimer = -1;
 	static BITMAPINFO  bmpinfo = {0};
 	HDC hdc;
 	PAINTSTRUCT ps;
-	HDC hdcMem;
+	HDC hdcMem = {0};
 	HGDIOBJ oldBitmap;
 
 	switch (msg) {
@@ -47,7 +62,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	case WM_CREATE:
 		hdc = GetDC(hwnd);
 		bitmap = (HBITMAP) CreateCompatibleBitmap(hdc, WIDTH, HEIGHT);
-		SetTimer(hwnd, idTimer = 1, 10, NULL);
+		SetTimer(hwnd, idTimer = 1, 10000, NULL);
 
 		bmpinfo.bmiHeader.biSize = sizeof(BITMAPINFO) - sizeof(RGBQUAD);
 		bmpinfo.bmiHeader.biWidth = WIDTH;
@@ -61,9 +76,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		bmpinfo.bmiHeader.biClrUsed = 0;
 		bmpinfo.bmiHeader.biClrImportant = 0;
 
+		init();
+
 		break;
 
 	case WM_TIMER:
+		PostMessage(hwnd, WM_PAINT, 0, 0);
+		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 
@@ -71,17 +90,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		oldBitmap = SelectObject(hdcMem, bitmap);
 
 		// DRAW
-		for (int x = -WIDTH / 2; x < WIDTH / 2; x++) {
-			for (int w = -2; w < 3; w++) {
-				SET_PIX_CVV(x, w, 0, 255, 0);
-				SET_PIX_CVV(w, x, 0, 255, 0);
-			}
-		}
-		for (int x = 0; x < 30; x++) {
-			for (int y = 0; y < 30; y++) {
-				SET_PIX_CVV(x, y, 255, 0, 0);
-			}
-		}
+		flush();
+		loop();
 
 		SetDIBits(hdcMem, bitmap, 0, HEIGHT, pixs, &bmpinfo, DIB_RGB_COLORS);
 
@@ -96,6 +106,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		break;
 
 	case WM_DESTROY:
+		destroy();
 		KillTimer(hwnd, idTimer);
 		DeleteObject(bitmap);
 		PostQuitMessage(0);
