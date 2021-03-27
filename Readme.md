@@ -30,5 +30,5 @@
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/Concept.png)
 
 ## Пример
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/Example.gif)
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/ColorExample.gif)
 
