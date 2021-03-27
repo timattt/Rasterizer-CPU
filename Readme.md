@@ -27,8 +27,8 @@
 Логика следующая: код делится на две части - сам растеризатор и системное окно для тестирования.
 Код написан таким образом, что растеризатор можно легко имплементировать на любую систему, достаточно указать функцию для прорисовки пикселя и вызывать необходимые прорисовочные функции.
 ### Диаграмма
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/Concept.png)
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/Concept.png)
 
 ## Пример
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/Example.png)
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/Example.png)
 
