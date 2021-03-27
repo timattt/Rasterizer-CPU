@@ -2,6 +2,9 @@
 
 ## Теорминимум
 
+### CMake
+Хорошее видео [тут](https://www.youtube.com/watch?v=gSTLzOmFChs)
+
 ### Матрица перспективной проекции
 Хорошая статья [тут](https://habr.com/ru/post/252771/)
 
