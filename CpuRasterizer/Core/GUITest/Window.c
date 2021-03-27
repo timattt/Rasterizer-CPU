@@ -1,4 +1,4 @@
-#include "../Graphics/GraphicalContext.h"
+#include "../GUITest/TestWindow.h"
 
 // Local variables
 char pixs[4 * WIDTH * HEIGHT] = {0};
@@ -18,6 +18,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	wc.lpfnWndProc = WndProc;
 	wc.hCursor = LoadCursor(0, IDC_ARROW);
+
+	init();
 
 	RegisterClassW(&wc);
 	CreateWindowW(wc.lpszClassName, L"Draw Bitmap",
@@ -76,8 +78,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		bmpinfo.bmiHeader.biClrUsed = 0;
 		bmpinfo.bmiHeader.biClrImportant = 0;
 
-		init();
-
 		break;
 
 	case WM_TIMER:
@@ -90,8 +90,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		oldBitmap = SelectObject(hdcMem, bitmap);
 
 		// DRAW
+		//---------------
 		flush();
-		loop();
+		draw();
+		//---------------
 
 		SetDIBits(hdcMem, bitmap, 0, HEIGHT, pixs, &bmpinfo, DIB_RGB_COLORS);
 

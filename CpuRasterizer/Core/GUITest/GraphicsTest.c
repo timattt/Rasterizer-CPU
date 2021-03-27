@@ -1,14 +1,14 @@
-#include "../Graphics/GraphicalContext.h"
+#include "../GUITest/TestWindow.h"
 
-vbo_p vbo = { 0 };
-vert verts[6 * 2 * 3];
+// To draw
+vbo_p vbo = NULL;
 
-// Matrices
-mat4f_t rot = {0};
-mat4f_t model = {0};
-mat4f_t proj = {0};
+struct tmpVert {
+	vec3f_t pos;
+	vec4f_t color;
+};
 
-int init() {
+void loadCube(struct tmpVert * verts) {
 	vec3f_t p1 = { 1.0f, 1.0f, 1.0f };
 	vec3f_t p2 = { 1.0f, 1.0f, -1.0f };
 	vec3f_t p3 = { 1.0f, -1.0f, 1.0f };
@@ -18,14 +18,18 @@ int init() {
 	vec3f_t p7 = { -1.0f, -1.0f, 1.0f };
 	vec3f_t p8 = { -1.0f, -1.0f, -1.0f };
 
-	vec4f_t c1 = { 1.0f, 0.0f, 0.0f, 1.0f };
-	vec4f_t c2 = { 1.0f, 1.0f, 0.0f, 1.0f };
-	vec4f_t c3 = { 0.0f, 0.0f, 0.0f, 1.0f };
-	vec4f_t c4 = { 1.0f, 0.0f, 1.0f, 1.0f };
-	vec4f_t c5 = { 1.0f, 0.0f, 0.0f, 1.0f };
+	vec4f_t c1 = { 1.0f, 0.0f, 0.0f, 1.0f }; //red
+	vec4f_t c2 = { 0.0f, 1.0f, 0.0f, 1.0f }; //green
+	vec4f_t c3 = { 0.0f, 0.0f, 1.0f, 1.0f }; //blue
+	vec4f_t c4 = { 0.5f, 0.0f, 0.0f, 1.0f }; //black
+
+	vec4f_t c5 = { 1.0f, 0.0f, 1.0f, 1.0f };
 	vec4f_t c6 = { 1.0f, 1.0f, 0.0f, 1.0f };
 	vec4f_t c7 = { 1.0f, 1.0f, 1.0f, 1.0f };
-	vec4f_t c8 = { 0.0f, 1.0f, 0.0f, 1.0f };
+	vec4f_t c8 = { 0.0f, 1.0f, 1.0f, 1.0f };
+
+	// CUBE VERTICES
+	//======================================
 
 	int i = 0;
 
@@ -77,7 +81,7 @@ int init() {
 	verts[i++].pos = p6;
 	verts[i++].pos = p8;
 
-
+	i = 0;
 
 	verts[i++].color = c1;
 	verts[i++].color = c2;
@@ -127,28 +131,47 @@ int init() {
 	verts[i++].color = c6;
 	verts[i++].color = c8;
 
-	for (int i = 0; i < 6 * 2 * 3; i++) {
-		verts[i].color.x = (float) (rand() % 255) / 255.0f;
-		verts[i].color.y = (float) (rand() % 255) / 255.0f;
-		verts[i].color.z = (float) (rand() % 255) / 255.0f;
-	}
+	//======================================
+}
 
-	vbo = CreateVertexBuffer(36, VERTEX_COORDS | COLOR);
-	LoadIntoVertexBuffer(vbo, (char*) verts);
+int init() {
 
-	SetProjectionMaxtrix(proj = createProjection(3.1415f / 2.0f, 1.0f, 1.0f, 6.0f));
-	SetModelMatrix(model = mul_mat_mat4f(createTranslationMatrix(0, 0, 2.0f), createXrotation(1.0f)));
+	// Cube vertices
+	struct tmpVert verts[6 * 2 * 3]; // 6 faces, 2 triangles per face, 3 vertices per triangle
+	loadCube(verts);
 
-	rot = createXrotation(3.1415f / 2);
+	// Set pixel draw function
+	SetFrameBufferCallFunction(SetFbPixel);
+
+	// Create VBO
+	CreateVertexBuffer(36, VERTEX_COORDS | COLOR, &vbo);
+
+	// Bind vbo
+	BindBuffer(vbo);
+
+	// load into vbo
+	LoadIntoVertexBuffer((char*) verts);
+
+	// Unbind vbo
+	UnbindBuffer(vbo);
+
+	// Set projection matrix
+	SetProjectionMaxtrix(CreateProjection_mat4f(3.1415f / 2.0f, 1.0f, 0.5f, 6.0f));
+
+	// Set model matrix
+	SetModelMatrix(Mul_mat4f_mat4f(CreateTranslationMatrix_mat4f(0, 0, 4.0f), Mul_mat4f_mat4f(CreateXrotation_mat4f(0.5f), CreateYrotation_mat4f(1.0f))));
 
 	return 0;
 }
 
-int loop() {
+int draw() {
+	// Bind buffer
 	BindBuffer(vbo);
 
+	// Draw call
 	Draw();
 
+	// Unbind buffer
 	UnbindBuffer(vbo);
 	return 0;
 }
