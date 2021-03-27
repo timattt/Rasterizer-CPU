@@ -55,9 +55,7 @@ int BindBuffer(vbo_p buf) {
 	return 0;
 }
 
-int UnbindBuffer(vbo_p buf) {
-	NOT_NULL(buf);
-
+int UnbindBuffer() {
 	currentContext.vbo = NULL;
 	return 0;
 }

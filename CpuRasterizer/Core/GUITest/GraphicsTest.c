@@ -153,7 +153,7 @@ int init() {
 	LoadIntoVertexBuffer((char*) verts);
 
 	// Unbind vbo
-	UnbindBuffer(vbo);
+	UnbindBuffer();
 
 	// Set projection matrix
 	SetProjectionMaxtrix(CreateProjection_mat4f(3.1415f / 2.0f, 1.0f, 0.5f, 6.0f));

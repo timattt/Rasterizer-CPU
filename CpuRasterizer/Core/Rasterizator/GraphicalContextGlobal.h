@@ -57,7 +57,7 @@ int CreateVertexBuffer(int verts_number, int mask, vbo_p * result);
 int DestroyVertexBuffer(vbo_p buf);
 int LoadIntoVertexBuffer(char * raw_buf);
 int BindBuffer(vbo_p buf);
-int UnbindBuffer(vbo_p buf);
+int UnbindBuffer();
 
 // Math
 int Print_mat4f(mat4f_t mat);
