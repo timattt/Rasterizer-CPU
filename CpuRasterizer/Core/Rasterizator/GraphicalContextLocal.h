@@ -59,5 +59,6 @@ int VertexShader(grcntx_p cnt);
 
 // fragment shader
 int FragmentShader(grcntx_p cnt, vert * primitive);
+int flushDepthBuffer();
 //=================================================
 

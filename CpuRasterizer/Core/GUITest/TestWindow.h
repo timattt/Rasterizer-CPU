@@ -3,6 +3,8 @@
 // Includes
 #include <windows.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <time.h>
 
 #include "../Rasterizator/GraphicalContextGlobal.h"
 

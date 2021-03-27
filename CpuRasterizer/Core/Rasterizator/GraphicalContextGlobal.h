@@ -76,7 +76,6 @@ vec3f_t Neg_vec3f(vec3f_t a);
 float Dot_vec3f(vec3f_t a, vec3f_t b);
 float Abs_vec3f(vec3f_t a);
 float Square_vec3f(vec3f_t a, vec3f_t b, vec3f_t c);
-float SquarePlane_vec3f(vec3f_t a, vec3f_t b, vec3f_t c);
 
 // projection maxtrix
 int SetProjectionMaxtrix(mat4f_t proj);

@@ -1,7 +1,7 @@
 #include "../GUITest/TestWindow.h"
 
 // Local variables
-char pixs[4 * WIDTH * HEIGHT] = {0};
+char pixs[4 * WIDTH * HEIGHT] = { 0 };
 
 // Local defines
 #define SET_PIX(X, Y, r, g, b) pixs[4 * (X + Y * HEIGHT)] = b; pixs[4 * (X + Y * HEIGHT) + 1] = g; pixs[4 * (X + Y * HEIGHT) + 2] = r;
@@ -23,8 +23,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	RegisterClassW(&wc);
 	CreateWindowW(wc.lpszClassName, L"Draw Bitmap",
-			WS_OVERLAPPEDWINDOW | WS_VISIBLE, WIDTH / 4, HEIGHT / 4, WIDTH, HEIGHT,
-			NULL, NULL, hInstance, NULL);
+			WS_OVERLAPPEDWINDOW | WS_VISIBLE, WIDTH / 4, HEIGHT / 4, WIDTH,
+			HEIGHT, NULL, NULL, hInstance, NULL);
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 
@@ -36,7 +36,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 
 int SetFbPixel(int x, int y, int r, int g, int b) {
-	if (x <= - WIDTH / 2 || x >= WIDTH / 2 || y <= -HEIGHT / 2 || y >= HEIGHT / 2) {
+	if (x <= - WIDTH / 2 || x >= WIDTH / 2 || y <= -HEIGHT / 2
+			|| y >= HEIGHT / 2) {
 		printf("bad coords for setfb pixel!\b");
 		exit(-1);
 	}
@@ -45,7 +46,7 @@ int SetFbPixel(int x, int y, int r, int g, int b) {
 }
 
 void flush() {
-	for (int x = 0; x < 4*WIDTH*HEIGHT; x++){
+	for (int x = 0; x < 4 * WIDTH * HEIGHT; x++) {
 		pixs[x] = 0;
 	}
 }
@@ -53,10 +54,10 @@ void flush() {
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static HBITMAP bitmap;
 	static int idTimer = -1;
-	static BITMAPINFO  bmpinfo = {0};
+	static BITMAPINFO bmpinfo = { 0 };
 	HDC hdc;
 	PAINTSTRUCT ps;
-	HDC hdcMem = {0};
+	HDC hdcMem = { 0 };
 	HGDIOBJ oldBitmap;
 
 	switch (msg) {
@@ -64,7 +65,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	case WM_CREATE:
 		hdc = GetDC(hwnd);
 		bitmap = (HBITMAP) CreateCompatibleBitmap(hdc, WIDTH, HEIGHT);
-		SetTimer(hwnd, idTimer = 1, 10000, NULL);
+		SetTimer(hwnd, idTimer = 1, 10, NULL);
 
 		bmpinfo.bmiHeader.biSize = sizeof(BITMAPINFO) - sizeof(RGBQUAD);
 		bmpinfo.bmiHeader.biWidth = WIDTH;
@@ -81,7 +82,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		break;
 
 	case WM_TIMER:
-		PostMessage(hwnd, WM_PAINT, 0, 0);
+		InvalidateRect (hwnd, NULL, FALSE);//PostMessage(hwnd, WM_PAINT, 0, 0);
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
@@ -89,11 +90,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		hdcMem = CreateCompatibleDC(hdc);
 		oldBitmap = SelectObject(hdcMem, bitmap);
 
+#ifdef PRINT_TIME
+		int delta = 0;
+		clock_t before = clock();
+#endif
+
 		// DRAW
 		//---------------
 		flush();
 		draw();
 		//---------------
+
+#ifdef PRINT_TIME
+		clock_t difference = clock() - before;
+		delta = difference * 1000 / CLOCKS_PER_SEC;
+		printf("%d milsec per tick!\n", delta);
+#endif
 
 		SetDIBits(hdcMem, bitmap, 0, HEIGHT, pixs, &bmpinfo, DIB_RGB_COLORS);
 

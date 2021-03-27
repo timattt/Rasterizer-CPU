@@ -1,6 +1,10 @@
 #include "../Rasterizator/GraphicalContextLocal.h"
 
+// Local vars
 float depth_buf[WIDTH * HEIGHT];
+
+// Defines
+#define SQUARE(A, B, C) (0.5f * ( (A.x - C.x)*(B.y - C.y) - (A.y - C.y)*(B.x - C.x) ))
 
 // Local methods
 //=================================================
@@ -15,11 +19,16 @@ float getDepth(int x, int y) {
 
 // Global methods
 //=================================================
+int flushDepthBuffer() {
+	for (int i = 0; i < WIDTH * HEIGHT; i++) {
+		depth_buf[i] = 20000.0f;
+	}
+	return 0;
+}
+
 int FragmentShader(grcntx_p cnt, vert* primitive) {
 	NOT_NULL(cnt);
 	NOT_NULL(primitive);
-
-	memset(depth_buf, 20000.0f, WIDTH * HEIGHT);
 
 	// Triangle vertecies
 	vec3f_t a = primitive[0].pos;
@@ -32,10 +41,10 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 
 	vec3f_t n = Cross_vec3f(p, q);
 
-	double A = n.x;
-	double B = n.y;
-	double C = n.z;
-	double D = -(A * a.x + B * a.y + C * a.z);
+	float A = n.x;
+	float B = n.y;
+	float C = n.z;
+	float D = -(A * a.x + B * a.y + C * a.z);
 
 	// Projecting
 	a.z = 0;
@@ -43,16 +52,26 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 	c.z = 0;
 
 	// Triangle square
-	double s = SquarePlane_vec3f(a, b, c);
+	float s_ = 1.0f / SQUARE(a, b, c);
 
 	for (int x = 1 - WIDTH / 2; x < WIDTH / 2; x++) {
 		for (int y = 1 - HEIGHT / 2; y < HEIGHT / 2; y++) {
-			vec3f_t cur = {.x = (double)(x) / (double)(WIDTH/2), .y = (double)(y)/(double)(HEIGHT/2), .z = 0};
+			vec3f_t cur = {.x = (float)(x) / (float)(WIDTH/2), .y = (float)(y)/(float)(HEIGHT/2), .z = 0};
 
 			// Scalars
-			double s1 = SquarePlane_vec3f(c, b, cur) / s;
-			double s2 = SquarePlane_vec3f(a, c, cur) / s;
-			double s3 = SquarePlane_vec3f(a, b, cur) / s;
+			float s1 = SQUARE(c, b, cur) * s_;
+			float s2 = SQUARE(a, c, cur) * s_;
+			float s3 = SQUARE(a, b, cur) * s_;
+
+			if (s1 < 0) {
+				s1 = -s1;
+			}
+			if (s2 < 0) {
+				s2 = -s2;
+			}
+			if (s3 < 0) {
+				s3 = -s3;
+			}
 
 			// To find interpolated depth we have to project cur onto primitive plane
 			cur.z = (-D - A * cur.x - B * cur.y) / C;

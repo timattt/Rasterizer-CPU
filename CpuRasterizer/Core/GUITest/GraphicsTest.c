@@ -2,6 +2,8 @@
 
 // To draw
 vbo_p vbo = NULL;
+mat4f_t model = {0};
+mat4f_t small_rot = {0};
 
 struct tmpVert {
 	vec3f_t pos;
@@ -159,12 +161,16 @@ int init() {
 	SetProjectionMaxtrix(CreateProjection_mat4f(3.1415f / 2.0f, 1.0f, 0.5f, 6.0f));
 
 	// Set model matrix
-	SetModelMatrix(Mul_mat4f_mat4f(CreateTranslationMatrix_mat4f(0, 0, 4.0f), Mul_mat4f_mat4f(CreateXrotation_mat4f(0.5f), CreateYrotation_mat4f(1.0f))));
+	SetModelMatrix(model = CreateTranslationMatrix_mat4f(0, 0, 4.0f));
+
+	small_rot =  Mul_mat4f_mat4f(CreateXrotation_mat4f(0.06f), CreateYrotation_mat4f(0.07f));
 
 	return 0;
 }
 
 int draw() {
+	SetModelMatrix(model = Mul_mat4f_mat4f(model, small_rot));
+
 	// Bind buffer
 	BindBuffer(vbo);
 

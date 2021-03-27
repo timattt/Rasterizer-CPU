@@ -161,17 +161,3 @@ float Square_vec3f(vec3f_t a, vec3f_t b, vec3f_t c) {
 	return res;
 }
 
-float SquarePlane_vec3f(vec3f_t a, vec3f_t b, vec3f_t c) {
-	float res = 0;
-
-	vec3f_t p = Sub_vec3f(a, c);
-	vec3f_t q = Sub_vec3f(b, c);
-
-	res = (p.x*q.y - p.y * q.x) / 2.0f;
-
-	if (res < 0) {
-		res = -res;
-	}
-
-	return res;
-}

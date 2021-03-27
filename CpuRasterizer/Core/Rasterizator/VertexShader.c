@@ -5,6 +5,9 @@ int VertexShader(grcntx_p cnt) {
 	NOT_NULL(cnt->vbo);
 	ENSURE(cnt->vbo->mask & VERTEX_COORDS);
 
+	// Flush depth buffer
+	flushDepthBuffer();
+
 	// matrices
 	mat4f_t proj = cnt->projectionMatrix;
 	mat4f_t model = cnt->modelMatrix;
