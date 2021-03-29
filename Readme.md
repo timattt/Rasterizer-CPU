@@ -29,6 +29,9 @@
 ### Диаграмма
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/Concept.png)
 
-## Пример
+## Пример с цветовой интерполяцией
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/ColorExample.gif)
+
+## Пример с текстурной интерполяцией
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/TextureExample.gif)
 
