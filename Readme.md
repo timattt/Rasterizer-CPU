@@ -33,5 +33,5 @@
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/ColorExample.gif)
 
 ## Пример с текстурной интерполяцией
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/TextureExample.gif)
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/TexturedExample.gif)
 
