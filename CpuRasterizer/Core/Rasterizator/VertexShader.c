@@ -48,6 +48,12 @@ int VertexShader(grcntx_p cnt) {
 		}
 		//-----------------------
 
+		// Texture coords: 8 bytes
+		if (curBuf->mask & TEXTURE_COORDS) {
+			memcpy(&primitive[primitive_vertex_index].txtr_pos, vertBegin, sizeof(vec2f_t));
+			vertBegin += sizeof(vec2f_t);
+		}
+
 		primitive_vertex_index++;
 
 		if (primitive_vertex_index == 3) {

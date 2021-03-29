@@ -13,6 +13,9 @@ int CalcVertexSizeByMask(int mask) {
 	if (mask & COLOR) {
 		res += 4 * sizeof(float);
 	}
+	if (mask & TEXTURE_COORDS) {
+		res += 2 * sizeof(float);
+	}
 	return res;
 }
 
@@ -72,5 +75,11 @@ int SetProjectionMaxtrix(mat4f_t proj) {
 
 int Draw() {
 	VertexShader(&currentContext);
+	return 0;
+}
+
+int SetTextureLoader(int (*textureLoader)(char*, struct Texture **)) {
+	NOT_NULL(textureLoader);
+	currentContext.textureLoader = textureLoader;
 	return 0;
 }

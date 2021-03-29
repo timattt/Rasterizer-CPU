@@ -51,8 +51,19 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 	b.z = 0;
 	c.z = 0;
 
+	// Texture pos
+	vec2f_t at = primitive[0].txtr_pos;
+	vec2f_t bt = primitive[1].txtr_pos;
+	vec2f_t ct = primitive[2].txtr_pos;
+
+	vec2f_t cur_tp = {0};
+	vec4f_t txtr_col = {0};
+
 	// Triangle square
 	float s_ = 1.0f / SQUARE(a, b, c);
+
+	// Color
+	vec4f_t color = {0};
 
 	for (int x = 1 - WIDTH / 2; x < WIDTH / 2; x++) {
 		for (int y = 1 - HEIGHT / 2; y < HEIGHT / 2; y++) {
@@ -94,11 +105,19 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 				}
 
 				// Colors
-				int r = 254.0f * (primitive[0].color.x * s1 + primitive[1].color.x * s2 + primitive[2].color.x * s3);
-				int g = 254.0f * (primitive[0].color.y * s1 + primitive[1].color.y * s2 + primitive[2].color.y * s3);
-				int b = 254.0f * (primitive[0].color.z * s1 + primitive[1].color.z * s2 + primitive[2].color.z * s3);
+				color = Add_vec4f(Mul_vec4f(primitive[0].color, s1), Add_vec4f(Mul_vec4f(primitive[1].color, s2), Mul_vec4f(primitive[2].color, s3)));
 
-				cnt->frameBufferSetPixel(x, y, r, g, b);
+				// Texture
+				if (cnt->texture != NULL && at.x >= -0.01f) {
+					cur_tp = Add_vec2f(Mul_vec2f(at, s1), Add_vec2f(Mul_vec2f(bt, s2), Mul_vec2f(ct, s3)));
+
+					GetPixel(cnt->texture, cur_tp, &txtr_col);
+					color = txtr_col;//Add_vec4f(color, txtr_col);
+				}
+
+				color = Mul_vec4f(color, 254.0f);
+
+				cnt->frameBufferSetPixel(x, y, color.x, color.y, color.z);
 			}
 		}
 	}

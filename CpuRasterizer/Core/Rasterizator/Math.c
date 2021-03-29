@@ -161,3 +161,42 @@ float Square_vec3f(vec3f_t a, vec3f_t b, vec3f_t c) {
 	return res;
 }
 
+vec2f_t Add_vec2f(vec2f_t a, vec2f_t b) {
+	vec2f_t v = {0};
+	v.x = a.x + b.x;
+	v.y = a.y + b.y;
+	return v;
+}
+
+vec2f_t Mul_vec2f(vec2f_t a, float f) {
+	vec2f_t v = {0};
+	v.x = a.x * f;
+	v.y = a.y * f;
+	return v;
+}
+
+vec3f_t Mul_vec3f(vec3f_t a, float f) {
+	vec3f_t res = {0};
+	res.x = a.x * f;
+	res.y = a.y * f;
+	res.z = a.z * f;
+	return res;
+}
+
+vec4f_t Add_vec4f(vec4f_t a, vec4f_t b) {
+	vec4f_t res = {0};
+	res.x = a.x + b.x;
+	res.y = a.y + b.y;
+	res.z = a.z + b.z;
+	res.w = a.w + b.w;
+	return res;
+}
+
+vec4f_t Mul_vec4f(vec4f_t a, float f) {
+	vec4f_t res = {0};
+	res.x = a.x * f;
+	res.y = a.y * f;
+	res.z = a.z * f;
+	res.w = a.w * f;
+	return res;
+}
