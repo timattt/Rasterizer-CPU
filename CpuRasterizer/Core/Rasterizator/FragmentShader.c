@@ -117,11 +117,6 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 				//--------------------------------------------------------------------
 				cur.z = traversal_interpolate_f(a.z, b.z, c.z, za, zb, zc, s1, s2, s3);
 
-				// CVV box test
-				if (cur.z > 1 || cur.z < -1) {
-					continue;
-				}
-
 				// Depth test
 				if (getDepth(x, y) >= cur.z) {
 					setDepth(x, y, cur.z);
