@@ -198,7 +198,7 @@ int init() {
 	// Set model matrix
 	SetModelMatrix(model = CreateTranslationMatrix_mat4f(0, 0, 4.0f));
 
-	small_rot = Mul_mat4f_mat4f(CreateXrotation_mat4f(0.07f), CreateYrotation_mat4f(0.09f));
+	small_rot = Mul_mat4f_mat4f(CreateXrotation_mat4f(0.02f), CreateYrotation_mat4f(0.03f));
 
 	return 0;
 }

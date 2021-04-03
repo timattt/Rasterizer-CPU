@@ -15,6 +15,30 @@ void setDepth(int x, int y, float val) {
 float getDepth(int x, int y) {
 	return depth_buf[((x + WIDTH / 2) + (HEIGHT / 2 - y) * HEIGHT)];
 }
+
+vec4f_t traversal_interpolate_4f(vec4f_t a1, vec4f_t a2, vec4f_t a3, float z_1, float z_2, float z_3, float s1, float s2, float s3) {
+	vec4f_t A_z = Add_vec4f(Add_vec4f(Mul_vec4f(a1, s1 * z_1), Mul_vec4f(a2, s2 * z_2)), Mul_vec4f(a3, s3 * z_3));
+	float z_ = 1.0f/(s1 * z_1 + s2 * z_2 + s3 * z_3);
+	return Mul_vec4f(A_z, z_);
+}
+
+vec3f_t traversal_interpolate3f(vec3f_t a1, vec3f_t a2, vec3f_t a3, float z_1, float z_2, float z_3, float s1, float s2, float s3) {
+	vec3f_t A_z = Add_vec3f(Add_vec3f(Mul_vec3f(a1, s1 * z_1), Mul_vec3f(a2, s2 * z_2)), Mul_vec3f(a3, s3 * z_3));
+	float z_ = 1.0f/(s1 * z_1 + s2 * z_2 + s3 * z_3);
+	return Mul_vec3f(A_z, z_);
+}
+
+vec2f_t traversal_interpolate_2f(vec2f_t a1, vec2f_t a2, vec2f_t a3, float z_1, float z_2, float z_3, float s1, float s2, float s3) {
+	vec2f_t A_z = Add_vec2f(Add_vec2f(Mul_vec2f(a1, s1 * z_1), Mul_vec2f(a2, s2 * z_2)), Mul_vec2f(a3, s3 * z_3));
+	float z_ = 1.0f/(s1 * z_1 + s2 * z_2 + s3 * z_3);
+	return Mul_vec2f(A_z, z_);
+}
+
+float traversal_interpolate_f(float a1, float a2, float a3, float z_1, float z_2, float z_3, float s1, float s2, float s3) {
+	float A_z = a1 * s1 * z_1 + a2 * s2 * z_2 + a3 * s3 * z_3;
+	float z_ = 1.0f/(s1 * z_1 + s2 * z_2 + s3 * z_3);
+	return A_z * z_;
+}
 //=================================================
 
 // Global methods
@@ -30,26 +54,15 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 	NOT_NULL(cnt);
 	NOT_NULL(primitive);
 
+	// Z
+	float za = 1.0f / primitive[0].pos.w;
+	float zb = 1.0f / primitive[1].pos.w;
+	float zc = 1.0f / primitive[2].pos.w;
+
 	// Triangle vertecies
-	vec3f_t a = primitive[0].pos;
-	vec3f_t b = primitive[1].pos;
-	vec3f_t c = primitive[2].pos;
-
-	// Triangle plane
-	vec3f_t p = Sub_vec3f(a, b);
-	vec3f_t q = Sub_vec3f(c, b);
-
-	vec3f_t n = Cross_vec3f(p, q);
-
-	float A = n.x;
-	float B = n.y;
-	float C = n.z;
-	float D = -(A * a.x + B * a.y + C * a.z);
-
-	// Projecting
-	a.z = 0;
-	b.z = 0;
-	c.z = 0;
+	vec3f_t a = FromHomogeneousCoordinates_vec4f(primitive[0].pos);
+	vec3f_t b = FromHomogeneousCoordinates_vec4f(primitive[1].pos);
+	vec3f_t c = FromHomogeneousCoordinates_vec4f(primitive[2].pos);
 
 	// Texture pos
 	vec2f_t at = primitive[0].txtr_pos;
@@ -65,8 +78,19 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 	// Color
 	vec4f_t color = {0};
 
-	for (int x = 1 - WIDTH / 2; x < WIDTH / 2; x++) {
-		for (int y = 1 - HEIGHT / 2; y < HEIGHT / 2; y++) {
+	// Clipping
+	float minx = MIN3(a.x, b.x, c.x);
+	float maxx = MAX3(a.x, b.x, c.x);
+	float miny = MIN3(a.y, b.y, c.y);
+	float maxy = MAX3(a.y, b.y, c.y);
+
+	int MINX = minx * WIDTH / 2 - 1;
+	int MAXX = maxx * WIDTH / 2 + 1;
+	int MINY = miny * HEIGHT / 2 - 1;
+	int MAXY = maxy * HEIGHT / 2 + 1;
+
+	for (int x = MINX; x < MAXX; x++) {
+		for (int y = MINY; y < MAXY; y++) {
 			vec3f_t cur = {.x = (float)(x) / (float)(WIDTH/2), .y = (float)(y)/(float)(HEIGHT/2), .z = 0};
 
 			// Scalars
@@ -84,16 +108,17 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 				s3 = -s3;
 			}
 
-			// To find interpolated depth we have to project cur onto primitive plane
-			cur.z = (-D - A * cur.x - B * cur.y) / C;
-
 			if (
 					(((cur.x - a.x)*(b.y-a.y)-(cur.y-a.y)*(b.x-a.x))*((c.x - a.x)*(b.y-a.y)-(c.y-a.y)*(b.x-a.x)) >= 0) &&
 					(((cur.x - b.x)*(c.y-b.y)-(cur.y-b.y)*(c.x-b.x))*((a.x - b.x)*(c.y-b.y)-(a.y-b.y)*(c.x-b.x)) >= 0) &&
 					(((cur.x - c.x)*(a.y-c.y)-(cur.y-c.y)*(a.x-c.x))*((b.x - c.x)*(a.y-c.y)-(b.y-c.y)*(a.x-c.x)) >= 0)) {
 
+				// DEPTH
+				//--------------------------------------------------------------------
+				cur.z = traversal_interpolate_f(a.z, b.z, c.z, za, zb, zc, s1, s2, s3);
+
 				// CVV box test
-				if (abs(cur.z) > 1) {
+				if (cur.z > 1 || cur.z < -1) {
 					continue;
 				}
 
@@ -103,17 +128,22 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 				} else {
 					continue;
 				}
+				//--------------------------------------------------------------------
 
 				// Colors
-				color = Add_vec4f(Mul_vec4f(primitive[0].color, s1), Add_vec4f(Mul_vec4f(primitive[1].color, s2), Mul_vec4f(primitive[2].color, s3)));
+				//--------------------------------------------------------------------
+				color = traversal_interpolate_4f(primitive[0].color, primitive[1].color, primitive[2].color,
+						za, zb, zc, s1, s2, s3);
+				//--------------------------------------------------------------------
 
 				// Texture
+				//--------------------------------------------------------------------
 				if (cnt->texture != NULL && at.x >= -0.01f) {
-					cur_tp = Add_vec2f(Mul_vec2f(at, s1), Add_vec2f(Mul_vec2f(bt, s2), Mul_vec2f(ct, s3)));
-
+					cur_tp = traversal_interpolate_2f(at, bt, ct, za, zb, zc, s1, s2, s3);
 					GetPixel(cnt->texture, cur_tp, &txtr_col);
 					color = txtr_col;//Add_vec4f(color, txtr_col);
 				}
+				//--------------------------------------------------------------------
 
 				color = Mul_vec4f(color, 254.0f);
 

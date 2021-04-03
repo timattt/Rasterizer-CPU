@@ -23,7 +23,6 @@ int VertexShader(grcntx_p cnt) {
 	for (int currentVertex = 0; currentVertex < curBuf->capacity; currentVertex++) {
 		vec3f_p pos_p = {0};
 		vec4f_t pos4 = {0};
-		vec3f_t fb_pos = {0};
 		vec4f_t fb_pos4 = {0};
 
 		char * vertBegin = curBuf->buffer + currentVertex * vertSize;
@@ -33,9 +32,8 @@ int VertexShader(grcntx_p cnt) {
 		pos_p = (vec3f_p)(vertBegin);
 		pos4 = ToHomogeneousCoordinates_vec3f(*pos_p);
 		fb_pos4 = Mul_mat4f_vec4f(proj, Mul_mat4f_vec4f(model, pos4));
-		fb_pos = FromHomogeneousCoordinates_vec4f(fb_pos4);
 
-		primitive[primitive_vertex_index].pos = fb_pos;
+		primitive[primitive_vertex_index].pos = fb_pos4;
 
 		vertBegin += sizeof(vec3f_t);
 		//-----------------------

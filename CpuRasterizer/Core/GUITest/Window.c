@@ -51,8 +51,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 int SetFbPixel(int x, int y, int r, int g, int b) {
 	if (x <= - WIDTH / 2 || x >= WIDTH / 2 || y <= -HEIGHT / 2
 			|| y >= HEIGHT / 2) {
-		printf("bad coords for setfb pixel!\b");
-		exit(-1);
+		return -1;
 	}
 	SET_PIX_CVV(x, y, r, g, b);
 	return 0;

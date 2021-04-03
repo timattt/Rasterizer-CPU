@@ -34,7 +34,7 @@ typedef struct Texture txtr_t;
 //=================================================
 // Vertex
 struct Vertex {
-	vec3f_t pos;
+	vec4f_t pos;
 	vec4f_t color;
 	vec2f_t txtr_pos;
 };
