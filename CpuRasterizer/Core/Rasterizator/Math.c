@@ -1,4 +1,4 @@
-#include "../Rasterizator/GraphicalContextLocal.h"
+#include "CPURasterizerLocal.h"
 
 vec4f_t Mul_mat4f_vec4f(mat4f_t mat, vec4f_t vec) {
 	vec4f_t res = { 0 };

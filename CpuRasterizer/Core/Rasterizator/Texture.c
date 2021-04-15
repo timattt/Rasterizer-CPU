@@ -1,4 +1,4 @@
-#include "GraphicalContextLocal.h"
+#include "CPURasterizerLocal.h"
 
 int LoadTexture(char * path, txtr_p * dest) {
 	NOT_NULL(path);
@@ -24,11 +24,15 @@ int UnbindTexture() {
 int CreateTexture(int width, int height, char * pixs, txtr_p * dest) {
 	NOT_NULL(dest);
 
-	*dest = malloc(sizeof(txtr_t));
+	AllocateGraphicalMemory(sizeof(txtr_t), (char**)dest);
 
 	(*dest)->width = width;
 	(*dest)->height = height;
-	(*dest)->pixels = pixs;
+	(*dest)->pixels = NULL;
+
+	AllocateGraphicalMemory(width * height * BYTES_PER_PIXEL, &((*dest)->pixels));
+
+	memcpy((*dest)->pixels, pixs, width * height * BYTES_PER_PIXEL);
 
 	return 0;
 }

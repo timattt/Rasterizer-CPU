@@ -1,34 +1,7 @@
 #pragma once
 
-// Constants
-//=================================================
-#define WIDTH 800
-#define HEIGHT 800
-//=================================================
-
-
-// Defines
-//=================================================
-#define VERTEX_COORDS 1
-#define COLOR 2
-#define TEXTURE_COORDS 4
-//=================================================
-
-
-// Functional defines
-//=================================================
-#define MAX2(A, B) ((A) > (B) ? (A) : (B))
-#define MIN2(A, B) ((A) > (B) ? (B) : (A))
-#define MAX3(A, B, C) MAX2(A, MAX2(B, C))
-#define MIN3(A, B, C) MIN2(A, MIN2(B, C))
-//=================================================
-
-
 // Typedefs
 //=================================================
-// VBO
-typedef struct VertexBuffer * vbo_p;
-
 // Matrix
 typedef struct Mat4f mat4f_t;
 typedef struct Mat4f * mat4f_p;
@@ -44,15 +17,10 @@ typedef struct Vec3f * vec3f_p;
 // 4
 typedef struct Vec4f vec4f_t;
 typedef struct Vec4f * vec4f_p;
-
-// Texture
-typedef struct Texture * txtr_p;
 //=================================================
-
 
 // Structures
 //=================================================
-// Math
 struct Mat4f {
 	float mat[4][4];
 };
@@ -73,21 +41,8 @@ struct Vec2f {
 };
 //=================================================
 
-// Functions
+// Global functions
 //=================================================
-// graphical context
-int Draw();
-int SetFrameBufferCallFunction(int (*frameBufferSetPixel)(int, int, int, int, int));
-int SetTextureLoader(int (*textureLoader)(char*, struct Texture **));
-
-// Vertex buffer
-int CalcVertexSizeByMask(int mask);
-int CreateVertexBuffer(int verts_number, int mask, vbo_p * result);
-int DestroyVertexBuffer(vbo_p buf);
-int LoadIntoVertexBuffer(char * raw_buf);
-int BindBuffer(vbo_p buf);
-int UnbindBuffer();
-
 // Math
 // Matrix
 int Print_mat4f(mat4f_t mat);
@@ -125,14 +80,4 @@ vec3f_t Mul_vec3f(vec3f_t a, float f);
 // Vec2f
 vec2f_t Add_vec2f(vec2f_t a, vec2f_t b);
 vec2f_t Mul_vec2f(vec2f_t a, float f);
-
-// Texture
-int LoadTexture(char * path, txtr_p * dest);
-int CreateTexture(int width, int height, char * pixs, txtr_p * dest);
-int BindTexture(txtr_p txt);
-int UnbindTexture();
-
-// Projection matrix
-int SetProjectionMaxtrix(mat4f_t proj);
-int SetModelMatrix(mat4f_t model);
 //=================================================

@@ -169,6 +169,8 @@ int loadTexture(char *path, txtr_p *res) {
 
 	CreateTexture(width, height, pixels, res);
 
+	free(pixels);
+
 	DeleteDC(hdcMem);
 	DeleteObject(bm);
 	return 0;

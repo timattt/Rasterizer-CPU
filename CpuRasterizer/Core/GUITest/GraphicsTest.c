@@ -1,10 +1,12 @@
 #include "../GUITest/TestWindow.h"
 
 // To draw
-vbo_p vbo = NULL;
+vbo_t vbo = NULL;
 mat4f_t model = {0};
 mat4f_t small_rot = {0};
 txtr_p txtr = {0};
+
+#define TOTAL_CUBE_VERTS 36
 
 struct tmpVert {
 	vec3f_t pos;
@@ -166,6 +168,8 @@ void loadCube(struct tmpVert * verts) {
 }
 
 int init() {
+	// Init context
+	InitContext();
 
 	// Cube vertices
 	struct tmpVert verts[6 * 2 * 3]; // 6 faces, 2 triangles per face, 3 vertices per triangle
@@ -180,14 +184,17 @@ int init() {
 	// Texture
 	LoadTexture((char*)(L"Texture.bmp"), &txtr);
 
+	// Set vbo recognition mask
+	SetVBOMask(VERTEX_COORDS | COLOR | TEXTURE_COORDS);
+
 	// Create VBO
-	CreateVertexBuffer(36, VERTEX_COORDS | COLOR | TEXTURE_COORDS, &vbo);
+	CreateVertexBuffer(TOTAL_CUBE_VERTS, &vbo);
 
 	// Bind vbo
 	BindBuffer(vbo);
 
 	// load into vbo
-	LoadIntoVertexBuffer((char*) verts);
+	LoadIntoVertexBuffer((char*) verts, TOTAL_CUBE_VERTS);
 
 	// Unbind vbo
 	UnbindBuffer();
@@ -204,8 +211,14 @@ int init() {
 }
 
 int draw() {
-	SetModelMatrix(model =
-			Mul_mat4f_mat4f(model, small_rot));
+	// Flush depth buffer
+	FlushDepthBuffer();
+
+	// Move model
+	SetModelMatrix(model = Mul_mat4f_mat4f(model, small_rot));
+
+	// Set buffer mask
+	SetVBOMask(VERTEX_COORDS | COLOR | TEXTURE_COORDS);
 
 	// Bind buffer
 	BindBuffer(vbo);
@@ -214,7 +227,7 @@ int draw() {
 	BindTexture(txtr);
 
 	// Draw call
-	Draw();
+	Draw(TOTAL_CUBE_VERTS);
 
 	// Unbin texture
 	UnbindTexture();
@@ -227,5 +240,6 @@ int draw() {
 
 int destroy() {
 	DestroyVertexBuffer(vbo);
+	DestroyContext();
 	return 0;
 }

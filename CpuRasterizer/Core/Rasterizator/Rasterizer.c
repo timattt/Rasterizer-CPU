@@ -1,19 +1,29 @@
-#include "../Rasterizator/GraphicalContextLocal.h"
+#include "CPURasterizerLocal.h"
 
 // Global variables
 grcntx_t currentContext;
 int errcode = 0;
+char errorMessage[ERROR_MESSAGE_LEN] = {0};
 
 // Global functions
-int CalcVertexSizeByMask(int mask) {
+int FlushDepthBuffer() {
+	NOT_NULL(currentContext.depthBuffer);
+
+	for (int i = 0; i < WIDTH * HEIGHT; i++) {
+		currentContext.depthBuffer[i] = 20000.0f;
+	}
+	return 0;
+}
+
+int CalcVertexSizeByMask() {
 	int res = 0;
-	if (mask & VERTEX_COORDS) {
+	if (currentContext.vbo_mask & VERTEX_COORDS) {
 		res += 3 * sizeof(float);
 	}
-	if (mask & COLOR) {
+	if (currentContext.vbo_mask & COLOR) {
 		res += 4 * sizeof(float);
 	}
-	if (mask & TEXTURE_COORDS) {
+	if (currentContext.vbo_mask & TEXTURE_COORDS) {
 		res += 2 * sizeof(float);
 	}
 	return res;
@@ -25,35 +35,31 @@ int SetFrameBufferCallFunction(int (*frameBufferSetPixel)(int, int, int, int, in
 	return 0;
 }
 
-int CreateVertexBuffer(int verts_number, int mask, vbo_p * result) {
+int CreateVertexBuffer(int total_verts, vbo_t * result) {
 	NOT_NULL(result);
-	ENSURE(verts_number > 0);
-
-	(*result) = malloc(sizeof(vbo_t));
-	(*result)->mask = mask;
-	(*result)->capacity = verts_number;
-	(*result)->buffer = malloc(verts_number * CalcVertexSizeByMask(mask));
+	ENSURE(total_verts > 0);
+	AllocateGraphicalMemory(total_verts * CalcVertexSizeByMask(), result);
 	return 0;
 }
 
-int DestroyVertexBuffer(vbo_p buf) {
+int DestroyVertexBuffer(vbo_t buf) {
 	NOT_NULL(buf);
 
-	free(buf->buffer);
-	free(buf);
+	// Memory may be freed here but I am too lazy to do normal memory allocation system.
+
 	return 0;
 }
 
-int LoadIntoVertexBuffer(char * raw_buf) {
+int LoadIntoVertexBuffer(char * raw_buf, int cap) {
 	NOT_NULL(raw_buf);
+	NOT_NULL(currentContext.vbo);
 
-	memcpy(currentContext.vbo->buffer, raw_buf, CalcVertexSizeByMask(currentContext.vbo->mask) * currentContext.vbo->capacity);
+	memcpy(currentContext.vbo, raw_buf, cap * CalcVertexSizeByMask());
 	return 0;
 }
 
-int BindBuffer(vbo_p buf) {
+int BindBuffer(vbo_t buf) {
 	NOT_NULL(buf);
-
 	currentContext.vbo = buf;
 	return 0;
 }
@@ -73,13 +79,84 @@ int SetProjectionMaxtrix(mat4f_t proj) {
 	return 0;
 }
 
-int Draw() {
-	VertexShader(&currentContext);
+int Draw(int total_prims) {
+	VertexStage(&currentContext, total_prims);
 	return 0;
 }
 
 int SetTextureLoader(int (*textureLoader)(char*, struct Texture **)) {
 	NOT_NULL(textureLoader);
 	currentContext.textureLoader = textureLoader;
+	return 0;
+}
+
+int InitContext() {
+	ENSURE(currentContext.depthBuffer == NULL);
+	ENSURE(currentContext.graphicalMemory == NULL);
+
+	currentContext.depthBuffer = malloc(WIDTH * HEIGHT * sizeof(float));
+	currentContext.graphicalMemory = malloc(MAX_GRAPHICAL_MEMORY_SIZE);
+	currentContext.emptyMem = currentContext.graphicalMemory;
+	return 0;
+}
+
+int DestroyContext() {
+	NOT_NULL(currentContext.depthBuffer);
+	NOT_NULL(currentContext.graphicalMemory);
+
+	free(currentContext.depthBuffer);
+	free(currentContext.graphicalMemory);
+
+	currentContext.depthBuffer = NULL;
+	currentContext.graphicalMemory = NULL;
+	return 0;
+}
+
+int SetVBOMask(int mask) {
+	currentContext.vbo_mask = mask;
+	return 0;
+}
+
+int SetDepth(int x, int y, float val) {
+	NOT_NULL(currentContext.depthBuffer);
+	currentContext.depthBuffer[((x + WIDTH / 2) + (HEIGHT / 2 - y) * HEIGHT)] = val;
+	return 0;
+}
+
+float GetDepth(int x, int y) {
+	NOT_NULL(currentContext.depthBuffer);
+	return currentContext.depthBuffer[((x + WIDTH / 2) + (HEIGHT / 2 - y) * HEIGHT)];
+}
+
+int PrintErrorMessage() {
+	if (strlen(errorMessage) > 0) {
+		printf("%s", errorMessage);
+	} else {
+		printf("No error is found!\n");
+	}
+	fflush(stdout);
+	return 0;
+}
+
+int GetErrorMessage(char * dest) {
+	NOT_NULL(dest);
+	memset(dest, 0, ERROR_MESSAGE_LEN);
+	if (strlen(errorMessage) > 0) {
+		sprintf(dest, "%s", errorMessage);
+	} else {
+		sprintf(dest, "No error is found!\n");
+	}
+	return 0;
+}
+
+int AllocateGraphicalMemory(int sz, char ** dest) {
+	NOT_NULL(dest);
+	ENSURE(sz >= 0);
+
+	ENSURE(currentContext.emptyMem + sz < currentContext.graphicalMemory + MAX_GRAPHICAL_MEMORY_SIZE);
+
+	(*dest) = currentContext.emptyMem;
+	currentContext.emptyMem += sz;
+
 	return 0;
 }

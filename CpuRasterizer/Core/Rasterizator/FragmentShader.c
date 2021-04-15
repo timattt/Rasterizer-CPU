@@ -1,21 +1,10 @@
-#include "../Rasterizator/GraphicalContextLocal.h"
-
-// Local vars
-float depth_buf[WIDTH * HEIGHT];
+#include "CPURasterizerLocal.h"
 
 // Defines
 #define SQUARE(A, B, C) (0.5f * ( (A.x - C.x)*(B.y - C.y) - (A.y - C.y)*(B.x - C.x) ))
 
 // Local methods
 //=================================================
-void setDepth(int x, int y, float val) {
-	depth_buf[((x + WIDTH / 2) + (HEIGHT / 2 - y) * HEIGHT)] = val;
-}
-
-float getDepth(int x, int y) {
-	return depth_buf[((x + WIDTH / 2) + (HEIGHT / 2 - y) * HEIGHT)];
-}
-
 vec4f_t traversal_interpolate_4f(vec4f_t a1, vec4f_t a2, vec4f_t a3, float z_1, float z_2, float z_3, float s1, float s2, float s3) {
 	vec4f_t A_z = Add_vec4f(Add_vec4f(Mul_vec4f(a1, s1 * z_1), Mul_vec4f(a2, s2 * z_2)), Mul_vec4f(a3, s3 * z_3));
 	float z_ = 1.0f/(s1 * z_1 + s2 * z_2 + s3 * z_3);
@@ -39,18 +28,8 @@ float traversal_interpolate_f(float a1, float a2, float a3, float z_1, float z_2
 	float z_ = 1.0f/(s1 * z_1 + s2 * z_2 + s3 * z_3);
 	return A_z * z_;
 }
-//=================================================
 
-// Global methods
-//=================================================
-int flushDepthBuffer() {
-	for (int i = 0; i < WIDTH * HEIGHT; i++) {
-		depth_buf[i] = 20000.0f;
-	}
-	return 0;
-}
-
-int FragmentShader(grcntx_p cnt, vert* primitive) {
+int FragmentStage(grcntx_p cnt, vert_t* primitive) {
 	NOT_NULL(cnt);
 	NOT_NULL(primitive);
 
@@ -118,8 +97,8 @@ int FragmentShader(grcntx_p cnt, vert* primitive) {
 				cur.z = traversal_interpolate_f(a.z, b.z, c.z, za, zb, zc, s1, s2, s3);
 
 				// Depth test
-				if (getDepth(x, y) >= cur.z) {
-					setDepth(x, y, cur.z);
+				if (GetDepth(x, y) >= cur.z) {
+					SetDepth(x, y, cur.z);
 				} else {
 					continue;
 				}

@@ -7,7 +7,7 @@
 #include <time.h>
 #include <wingdi.h>
 
-#include "../Rasterizator/GraphicalContextGlobal.h"
+#include "../Rasterizator/CPURasterizerGlobal.h"
 
 // Functions
 // window
