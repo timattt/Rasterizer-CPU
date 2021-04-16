@@ -1,7 +1,14 @@
-# Растеризатор на CPU
+# Фундаментальное изучение ЭВМ
+Этот репозиторий содержит теорминимумы и проекты по следующим разделам информатики: операционные системы, 3D графика.
+Проекты, представленные здесь: процессорный растеризатор. 
 
 # English version
 You can find english version of this README [here](https://github.com/timattt/Computer-science-knowledge/blob/master/README_EN.md)
+
+# Схема кратокого обзора задач из этого репозитория по 3D графике
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/about/SYNOPSIS_SCHEME.png)
+
+# Растеризатор на CPU
 
 ## Постановка задачи
 Мы хотим сэмулировать работу GPU на CPU, а также построить весь цикл операций классического OpenGL.
