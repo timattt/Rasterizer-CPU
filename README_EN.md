@@ -1,7 +1,10 @@
-# Rasterizer on CPU
+# Fundamental study of computer science
+This repository contains theoretical minimums and projects for the following computer science topics: operating systems, 3D graphics.
+Projects presented here: CPU rasterizer.
 
-# English version
-You can find english version of this README [here](https://github.com/timattt/Computer-science-knowledge/blob/master/README_EN.md)
+# Schematic overview of tasks from this repository on 3D graphics
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/about/SYNOPSIS_SCHEME.png)
+
 
 ## Formulation of the problem
 We want to emulate the work of a GPU on a CPU, as well as build the entire cycle of operations of classic OpenGL.
