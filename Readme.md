@@ -1,9 +1,16 @@
 # Растеризатор на CPU
 
+# English version
+You can find english version of this README [here](https://github.com/timattt/Computer-science-knowledge/blob/master/README_EN.md)
+
 ## Постановка задачи
+Мы хотим сэмулировать работу GPU на CPU, а также построить весь цикл операций классического OpenGL.
 У нас имеются исходные данные о пространстве и объектах в нем (в примере куб, значит у нас есть координаты его вершин в его локальном пространстве, на куб натянута текстура,
 значит у нас есть текстурные координаты вершин и сама картинка), наша задача спроецировать это все из трехмерного пространства в двумерное и нарисовать в буфере экрана.
 Буфер экрана предоставляется ОС. В данном случае используем winapi.
+
+## Пример
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/NiceExample.gif)
 
 ## Теорминимум
 
@@ -29,6 +36,4 @@
 ### Диаграмма
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/Concept.png)
 
-## Пример
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/NiceExample.gif)
 
