@@ -4,8 +4,10 @@
 //=================================================
 #define WIDTH 800
 #define HEIGHT 800
-#define MAX_GRAPHICAL_MEMORY_SIZE 100000
+#define MAX_GRAPHICAL_MEMORY_SIZE 10000000
 #define BYTES_PER_PIXEL 4
+#define SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE 100
+#define VERTICES_PER_PRIMITIVE 3
 //=================================================
 
 // Includes
@@ -65,12 +67,19 @@ int LoadTexture(char * path, txtr_p * dest);
 int CreateTexture(int width, int height, char * pixs, txtr_p * dest);
 int BindTexture(txtr_p txt);
 int UnbindTexture();
+txtr_p GetBindedTexture();
+vec4f_t GetPixel_vec2f(txtr_p txtr, vec2f_t pos);
 
 // Projection matrix
 int SetProjectionMaxtrix(mat4f_t proj);
 int SetModelMatrix(mat4f_t model);
+mat4f_t GetProjectionMatrix();
+mat4f_t GetModelMatrix();
 
 // Errors
 int PrintErrorMessage();
 int GetErrorMessage(char * dest);
+
+// Shader program
+int SetShaderProgram(int (*vertexShader)(float * in, float * out), int (*fragmentShader)(float * in, float out[4]));
 //=================================================

@@ -9,6 +9,7 @@ typedef struct Mat4f * mat4f_p;
 // Vectors
 // 2
 typedef struct Vec2f vec2f_t;
+typedef struct Vec2f * vec2f_p;
 
 // 3
 typedef struct Vec3f vec3f_t;

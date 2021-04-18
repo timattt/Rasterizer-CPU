@@ -16,6 +16,10 @@ int BindTexture(txtr_p txt) {
 	return 0;
 }
 
+txtr_p GetBindedTexture() {
+	return currentContext.texture;
+}
+
 int UnbindTexture() {
 	currentContext.texture = NULL;
 	return 0;
@@ -46,20 +50,23 @@ float process(char c) {
 	return (float)(v) / 256.0f;
 }
 
-int GetPixel(txtr_p txtr, vec2f_t pos, vec4f_t * dest) {
-	NOT_NULL(dest);
-	NOT_NULL(txtr);
+vec4f_t GetPixel_vec2f(txtr_p txtr, vec2f_t pos) {
+	if (txtr == NULL || pos.x < -0.01) {
+		vec4f_t bad = {0};
+		return bad;
+	}
+
+	vec4f_t dest = { 0 };
 
 	int x = pos.x * txtr->width;
 	int y = pos.y * txtr->height;
 
 	char * ptr = txtr->pixels + 4 * (y * txtr->width + x);
 
-	dest->x = process(ptr[2]);
-	dest->y = process(ptr[1]);
-	dest->z = process(ptr[0]);
+	dest.x = process(ptr[2]);
+	dest.y = process(ptr[1]);
+	dest.z = process(ptr[0]);
+	dest.w = process(ptr[3]);
 
-	dest->w = process(ptr[3]);
-
-	return 0;
+	return dest;
 }

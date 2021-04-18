@@ -29,53 +29,62 @@ float traversal_interpolate_f(float a1, float a2, float a3, float z_1, float z_2
 	return A_z * z_;
 }
 
-int FragmentStage(grcntx_p cnt, vert_t* primitive) {
+int FragmentStage(grcntx_p cnt, float * in) {
 	NOT_NULL(cnt);
-	NOT_NULL(primitive);
+	NOT_NULL(in);
+
+	float * v1 = in + 0 * SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4;
+	float * v2 = in + 1 * SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4;
+	float * v3 = in + 2 * SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4;
+
+	vec4f_p a4_p = (vec4f_t *)v1;
+	vec4f_p b4_p = (vec4f_t *)v2;
+	vec4f_p c4_p = (vec4f_t *)v3;
+
+	vec4f_t a4 = *a4_p;
+	vec4f_t b4 = *b4_p;
+	vec4f_t c4 = *c4_p;
 
 	// Z
-	float za = 1.0f / primitive[0].pos.w;
-	float zb = 1.0f / primitive[1].pos.w;
-	float zc = 1.0f / primitive[2].pos.w;
+	float za = 1.0f / a4.w;
+	float zb = 1.0f / b4.w;
+	float zc = 1.0f / c4.w;
 
 	// Triangle vertecies
-	vec3f_t a = FromHomogeneousCoordinates_vec4f(primitive[0].pos);
-	vec3f_t b = FromHomogeneousCoordinates_vec4f(primitive[1].pos);
-	vec3f_t c = FromHomogeneousCoordinates_vec4f(primitive[2].pos);
-
-	// Texture pos
-	vec2f_t at = primitive[0].txtr_pos;
-	vec2f_t bt = primitive[1].txtr_pos;
-	vec2f_t ct = primitive[2].txtr_pos;
-
-	vec2f_t cur_tp = {0};
-	vec4f_t txtr_col = {0};
+	vec3f_t a3 = FromHomogeneousCoordinates_vec4f(a4);
+	vec3f_t b3 = FromHomogeneousCoordinates_vec4f(b4);
+	vec3f_t c3 = FromHomogeneousCoordinates_vec4f(c4);
 
 	// Triangle square
-	float s_ = 1.0f / SQUARE(a, b, c);
+	float s_ = 1.0f / SQUARE(a3, b3, c3);
 
 	// Color
 	vec4f_t color = {0};
 
 	// Clipping
-	float minx = MIN3(a.x, b.x, c.x);
-	float maxx = MAX3(a.x, b.x, c.x);
-	float miny = MIN3(a.y, b.y, c.y);
-	float maxy = MAX3(a.y, b.y, c.y);
+	float minx = MIN3(a3.x, b3.x, c3.x);
+	float maxx = MAX3(a3.x, b3.x, c3.x);
+	float miny = MIN3(a3.y, b3.y, c3.y);
+	float maxy = MAX3(a3.y, b3.y, c3.y);
 
 	int MINX = minx * WIDTH / 2 - 1;
 	int MAXX = maxx * WIDTH / 2 + 1;
 	int MINY = miny * HEIGHT / 2 - 1;
 	int MAXY = maxy * HEIGHT / 2 + 1;
 
+	// Attribs
+	float attribs[SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4] = { 0 };
+
 	for (int x = MINX; x < MAXX; x++) {
 		for (int y = MINY; y < MAXY; y++) {
+			memset(attribs, 0, sizeof(attribs));
+
 			vec3f_t cur = {.x = (float)(x) / (float)(WIDTH/2), .y = (float)(y)/(float)(HEIGHT/2), .z = 0};
 
 			// Scalars
-			float s1 = SQUARE(c, b, cur) * s_;
-			float s2 = SQUARE(a, c, cur) * s_;
-			float s3 = SQUARE(a, b, cur) * s_;
+			float s1 = SQUARE(c3, b3, cur) * s_;
+			float s2 = SQUARE(a3, c3, cur) * s_;
+			float s3 = SQUARE(a3, b3, cur) * s_;
 
 			if (s1 < 0) {
 				s1 = -s1;
@@ -88,13 +97,19 @@ int FragmentStage(grcntx_p cnt, vert_t* primitive) {
 			}
 
 			if (
-					(((cur.x - a.x)*(b.y-a.y)-(cur.y-a.y)*(b.x-a.x))*((c.x - a.x)*(b.y-a.y)-(c.y-a.y)*(b.x-a.x)) >= 0) &&
-					(((cur.x - b.x)*(c.y-b.y)-(cur.y-b.y)*(c.x-b.x))*((a.x - b.x)*(c.y-b.y)-(a.y-b.y)*(c.x-b.x)) >= 0) &&
-					(((cur.x - c.x)*(a.y-c.y)-(cur.y-c.y)*(a.x-c.x))*((b.x - c.x)*(a.y-c.y)-(b.y-c.y)*(a.x-c.x)) >= 0)) {
+					(((cur.x - a3.x)*(b3.y-a3.y)-(cur.y-a3.y)*(b3.x-a3.x))*((c3.x - a3.x)*(b3.y-a3.y)-(c3.y-a3.y)*(b3.x-a3.x)) >= 0) &&
+					(((cur.x - b3.x)*(c3.y-b3.y)-(cur.y-b3.y)*(c3.x-b3.x))*((a3.x - b3.x)*(c3.y-b3.y)-(a3.y-b3.y)*(c3.x-b3.x)) >= 0) &&
+					(((cur.x - c3.x)*(a3.y-c3.y)-(cur.y-c3.y)*(a3.x-c3.x))*((b3.x - c3.x)*(a3.y-c3.y)-(b3.y-c3.y)*(a3.x-c3.x)) >= 0)) {
+
+				// Interpolation
+				for (int i = 0; i < SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4; i++) {
+					float * curAtr = attribs + i;
+					*curAtr = traversal_interpolate_f(v1[i], v2[i], v3[i], za, zb, zc, s1, s2, s3);
+				}
 
 				// DEPTH
 				//--------------------------------------------------------------------
-				cur.z = traversal_interpolate_f(a.z, b.z, c.z, za, zb, zc, s1, s2, s3);
+				cur.z = attribs[2];
 
 				// Depth test
 				if (GetDepth(x, y) >= cur.z) {
@@ -104,20 +119,22 @@ int FragmentStage(grcntx_p cnt, vert_t* primitive) {
 				}
 				//--------------------------------------------------------------------
 
-				// Colors
-				//--------------------------------------------------------------------
-				color = traversal_interpolate_4f(primitive[0].color, primitive[1].color, primitive[2].color,
-						za, zb, zc, s1, s2, s3);
-				//--------------------------------------------------------------------
+				if (cnt->fragmentShader != NULL) {
+					cnt->fragmentShader(attribs + 4, (float*)(&color));
+				} else {
+					vec4f_p col_p = (vec4f_p)(attribs + 4);
+					vec2f_p txc_p = (vec2f_p)(attribs + 8);
 
-				// Texture
-				//--------------------------------------------------------------------
-				if (cnt->texture != NULL && at.x >= -0.01f) {
-					cur_tp = traversal_interpolate_2f(at, bt, ct, za, zb, zc, s1, s2, s3);
-					GetPixel(cnt->texture, cur_tp, &txtr_col);
-					color = txtr_col;//Add_vec4f(color, txtr_col);
+					// Colors
+					//--------------------------------------------------------------------
+					color = *col_p;
+					//--------------------------------------------------------------------
+
+					// Texture
+					//--------------------------------------------------------------------
+					color = Add_vec4f(color, GetPixel_vec2f(cnt->texture, *txc_p));
+					//--------------------------------------------------------------------
 				}
-				//--------------------------------------------------------------------
 
 				color = Mul_vec4f(color, 254.0f);
 

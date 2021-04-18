@@ -1,5 +1,7 @@
 #pragma once
 
+#define DEBUG
+
 // Errors handle
 //=================================================
 int errcode;
@@ -9,10 +11,12 @@ char errorMessage[ERROR_MESSAGE_LEN];
 #define BAD_ARGS_ERR_CODE 2
 #ifdef DEBUG
 	#define NOT_NULL(A) do {if ((A) == NULL) {memset(errorMessage, 0, ERROR_MESSAGE_LEN); sprintf(errorMessage, "NULL! In file %s on line %d\n", __FILE__, __LINE__); PrintErrorMessage(); exit(0); errcode = NULL_ERR_CODE;return -1;}} while (0)
-	#define ENSURE(A) do {if (!(A)) {memset(errorMessage, 0, ERROR_MESSAGE_LEN); sprintf(errorMessage, "Not ensured! In file %s on line %d\n", __FILE__, __LINE__); PrintErrorMessage(); exit(0); errcode = BAD_ARGS_ERR_CODE;return -1;}} while (0)
+	#define ENSURE_M(A, MES) do {if (!(A)) {memset(errorMessage, 0, ERROR_MESSAGE_LEN); sprintf(errorMessage, "%s In file %s on line %d\n", MES, __FILE__, __LINE__); PrintErrorMessage(); exit(0); errcode = BAD_ARGS_ERR_CODE; return -1;}} while (0)
+	#define ENSURE(A) ENSURE_M(A, "Not ensured!")
 #else
 	#define NOT_NULL(A) do {if ((A) == NULL) {memset(errorMessage, 0, ERROR_MESSAGE_LEN); sprintf(errorMessage, "NULL! In file %s on line %d\n", __FILE__, __LINE__); errcode = NULL_ERR_CODE;return -1;}} while (0)
-	#define ENSURE(A) do {if (!(A)) {memset(errorMessage, 0, ERROR_MESSAGE_LEN); sprintf(errorMessage, "Not ensured! In file %s on line %d\n", __FILE__, __LINE__);errcode = BAD_ARGS_ERR_CODE;return -1;}} while (0)
+	#define ENSURE_M(A, MES) do {if (!(A)) {memset(errorMessage, 0, ERROR_MESSAGE_LEN); sprintf(errorMessage, "%s In file %s on line %d\n", MES, __FILE__, __LINE__); errcode = BAD_ARGS_ERR_CODE; return -1;}} while (0)
+	#define ENSURE(A) ENSURE_M(A, "Not ensured!")
 #endif
 //=================================================
 
@@ -70,6 +74,10 @@ struct GraphicalContext {
 	// system
 	int (*frameBufferSetPixel)(int, int, int, int, int);
 	int (*textureLoader)(char*, struct Texture **);
+
+	// Shader program
+	int (*vertexShader)(float * in, float * out);
+	int (*fragmentShader)(float * in, float out[4]);
 } currentContext;
 //=================================================
 
@@ -80,16 +88,14 @@ struct GraphicalContext {
 int VertexStage(grcntx_p cnt, int total_prim);
 
 // Fragment shader
-int FragmentStage(grcntx_p cnt, vert_t * primitive);
+int FragmentStage(grcntx_p cnt, float * in);
 
 // Depth buffer
 int SetDepth(int x, int y, float val);
 float GetDepth(int x, int y);
 
-// Texture
-int GetPixel(txtr_p txtr, vec2f_t pos, vec4f_t * dest);
-
 // Graphical memory
 int AllocateGraphicalMemory(int sz, char ** dest);
+int FreeGraphicalMemory(char * ptr);
 //=================================================
 

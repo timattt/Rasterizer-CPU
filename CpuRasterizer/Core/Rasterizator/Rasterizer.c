@@ -45,7 +45,7 @@ int CreateVertexBuffer(int total_verts, vbo_t * result) {
 int DestroyVertexBuffer(vbo_t buf) {
 	NOT_NULL(buf);
 
-	// Memory may be freed here but I am too lazy to do normal memory allocation system.
+	FreeGraphicalMemory(buf);
 
 	return 0;
 }
@@ -97,6 +97,9 @@ int InitContext() {
 	currentContext.depthBuffer = malloc(WIDTH * HEIGHT * sizeof(float));
 	currentContext.graphicalMemory = malloc(MAX_GRAPHICAL_MEMORY_SIZE);
 	currentContext.emptyMem = currentContext.graphicalMemory;
+
+	ENSURE(currentContext.depthBuffer && currentContext.graphicalMemory);
+
 	return 0;
 }
 
@@ -153,10 +156,32 @@ int AllocateGraphicalMemory(int sz, char ** dest) {
 	NOT_NULL(dest);
 	ENSURE(sz >= 0);
 
-	ENSURE(currentContext.emptyMem + sz < currentContext.graphicalMemory + MAX_GRAPHICAL_MEMORY_SIZE);
+	ENSURE_M(currentContext.emptyMem + sz < currentContext.graphicalMemory + MAX_GRAPHICAL_MEMORY_SIZE, "Out of graphical memory!");
 
 	(*dest) = currentContext.emptyMem;
 	currentContext.emptyMem += sz;
 
 	return 0;
+}
+
+int FreeGraphicalMemory(char * ptr) {
+	// Memory may be freed here but I am too lazy to do normal memory allocation system.
+	return 0;
+}
+
+int SetShaderProgram(int (*vertexShader)(float * in, float * out), int (*fragmentShader)(float * in, float out[4])) {
+	NOT_NULL(vertexShader);
+	NOT_NULL(fragmentShader);
+
+	currentContext.vertexShader = vertexShader;
+	currentContext.fragmentShader = fragmentShader;
+
+	return 0;
+}
+
+mat4f_t GetProjectionMatrix() {
+	return currentContext.projectionMatrix;
+}
+mat4f_t GetModelMatrix() {
+	return currentContext.modelMatrix;
 }

@@ -15,6 +15,8 @@ struct tmpVert {
 };
 
 void loadCube(struct tmpVert * verts) {
+	vec4f_t c0 = { 0 };
+
 	vec3f_t p1 = { 1.0f, 1.0f, 1.0f };
 	vec3f_t p2 = { 1.0f, -1.0f, 1.0f };
 	vec3f_t p3 = { -1.0f, 1.0f, 1.0f };
@@ -116,21 +118,21 @@ void loadCube(struct tmpVert * verts) {
 
 	i = 0;
 
-	verts[i++].color = c1;
-	verts[i++].color = c2;
-	verts[i++].color = c3;
+	verts[i++].color = c0;
+	verts[i++].color = c0;
+	verts[i++].color = c0;
 
-	verts[i++].color = c2;
-	verts[i++].color = c3;
-	verts[i++].color = c4;
+	verts[i++].color = c0;
+	verts[i++].color = c0;
+	verts[i++].color = c0;
 
-	verts[i++].color = c5;
-	verts[i++].color = c6;
-	verts[i++].color = c7;
+	verts[i++].color = c0;
+	verts[i++].color = c0;
+	verts[i++].color = c0;
 
-	verts[i++].color = c6;
-	verts[i++].color = c7;
-	verts[i++].color = c8;
+	verts[i++].color = c0;
+	verts[i++].color = c0;
+	verts[i++].color = c0;
 
 	verts[i++].color = c1;
 	verts[i++].color = c2;
@@ -167,6 +169,44 @@ void loadCube(struct tmpVert * verts) {
 	//======================================
 }
 
+#include "../Rasterizator/SL.h"
+
+VERTEX_SHADER(TEST, {
+		// Attributes
+		//------------------
+		// IN
+		V_IN_ATTRIBUTE_F(3, POS, 0);
+		V_IN_ATTRIBUTE_F(4, COL, 3);
+		V_IN_ATTRIBUTE_F(2, TXTR_POS, 7);
+
+		// OUT
+		V_OUT_ATTRIBUTE_F(4, OUT_COL, 0);
+		V_OUT_ATTRIBUTE_F(2, OUT_TXTR_POS, 4);
+		//------------------
+
+		// Code
+		VEC(4) ps = VEC4(POS, 1);
+
+		OUT_ATTRIBUTE(CVV_POS) = MUL_MV(4, PROJ_MAT, MUL_MV(4, MODEL_MAT, ps));
+		OUT_ATTRIBUTE(OUT_COL) = COL;
+		OUT_ATTRIBUTE(OUT_TXTR_POS) = TXTR_POS;
+
+});
+
+FRAGMENT_SHADER(TEST, {
+		// Attributes
+		//------------------
+		// IN
+		F_IN_ATTRIBUTE_F(4, COL, 0);
+		F_IN_ATTRIBUTE_F(2, TXTR_POS, 4);
+		//------------------
+
+		// Code
+		OUT_ATTRIBUTE(FRAG_COLOR) = ADD_VV(4, SAMPLER_2D(TEXTURE, TXTR_POS), COL);
+});
+
+//SHADER_PROGRAM(TEST, {}, {});
+
 int init() {
 	// Init context
 	InitContext();
@@ -202,10 +242,12 @@ int init() {
 	// Set projection matrix
 	SetProjectionMaxtrix(CreateProjection_mat4f(3.1415f / 2.0f, 1.0f, 0.5f, 6.0f));
 
-	// Set model matrix
-	SetModelMatrix(model = CreateTranslationMatrix_mat4f(0, 0, 4.0f));
-
+	// Matrices
+	model = CreateTranslationMatrix_mat4f(0, 0, 4.0f);
 	small_rot = Mul_mat4f_mat4f(CreateXrotation_mat4f(0.02f), CreateYrotation_mat4f(0.03f));
+
+	// Shaders
+	USE_SHADER_PROGRAM(TEST);
 
 	return 0;
 }
