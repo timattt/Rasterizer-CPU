@@ -1,7 +1,14 @@
-# Растеризатор на CPU
+# Фундаментальное изучение ЭВМ
+Этот репозиторий содержит теорминимумы и проекты по следующим разделам информатики: операционные системы, 3D графика.
+Проекты, представленные здесь: процессорный растеризатор. 
 
 # English version
 You can find english version of this README [here](https://github.com/timattt/Computer-science-knowledge/blob/master/README_EN.md)
+
+# Схема кратокого обзора задач из этого репозитория по 3D графике
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/about/SYNOPSIS_SCHEME.png)
+
+# Растеризатор на CPU
 
 ## Постановка задачи
 Мы хотим сэмулировать работу GPU на CPU, а также построить весь цикл операций классического OpenGL.
@@ -11,6 +18,86 @@ You can find english version of this README [here](https://github.com/timattt/Co
 
 ## Пример
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/NiceExample.gif)
+
+## Пример кода
+```
+int init() {
+	// Init context
+	InitContext();
+
+	// Cube vertices
+	struct tmpVert verts[6 * 2 * 3]; // 6 faces, 2 triangles per face, 3 vertices per triangle
+	loadCube(verts);
+
+	// Set pixel draw function
+	SetFrameBufferCallFunction(SetFbPixel);
+
+	// Set texture loader
+	SetTextureLoader(loadTexture);
+
+	// Texture
+	LoadTexture((char*)(L"Texture.bmp"), &txtr);
+
+	// Set vbo recognition mask
+	SetVBOMask(VERTEX_COORDS | COLOR | TEXTURE_COORDS);
+
+	// Create VBO
+	CreateVertexBuffer(TOTAL_CUBE_VERTS, &vbo);
+
+	// Bind vbo
+	BindBuffer(vbo);
+
+	// load into vbo
+	LoadIntoVertexBuffer((char*) verts, TOTAL_CUBE_VERTS);
+
+	// Unbind vbo
+	UnbindBuffer();
+
+	// Set projection matrix
+	SetProjectionMaxtrix(CreateProjection_mat4f(3.1415f / 2.0f, 1.0f, 0.5f, 6.0f));
+
+	// Set model matrix
+	SetModelMatrix(model = CreateTranslationMatrix_mat4f(0, 0, 4.0f));
+
+	small_rot = Mul_mat4f_mat4f(CreateXrotation_mat4f(0.02f), CreateYrotation_mat4f(0.03f));
+
+	return 0;
+}
+
+int draw() {
+	// Flush depth buffer
+	FlushDepthBuffer();
+
+	// Move model
+	SetModelMatrix(model = Mul_mat4f_mat4f(model, small_rot));
+
+	// Set buffer mask
+	SetVBOMask(VERTEX_COORDS | COLOR | TEXTURE_COORDS);
+
+	// Bind buffer
+	BindBuffer(vbo);
+
+	// Bind texture
+	BindTexture(txtr);
+
+	// Draw call
+	Draw(TOTAL_CUBE_VERTS);
+
+	// Unbin texture
+	UnbindTexture();
+
+	// Unbind buffer
+	UnbindBuffer(vbo);
+
+	return 0;
+}
+
+int destroy() {
+	DestroyVertexBuffer(vbo);
+	DestroyContext();
+	return 0;
+}
+```
 
 ## Теорминимум
 
