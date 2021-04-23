@@ -5,7 +5,7 @@
 # English version
 You can find english version of this README [here](https://github.com/timattt/Computer-science-knowledge/blob/master/README_EN.md)
 
-# Схема кратокого обзора задач из этого репозитория по 3D графике
+# Схема задач из этого репозитория по 3D графике
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/about/SYNOPSIS_SCHEME.png)
 
 # Растеризатор на CPU
