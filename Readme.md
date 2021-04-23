@@ -19,6 +19,9 @@ You can find english version of this README [here](https://github.com/timattt/Co
 ## Пример
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/NiceExample.gif)
 
+## Более сложный пример
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/FINAL_EXAMPLE.gif)
+
 ## Теорминимум
 
 ### CMake
