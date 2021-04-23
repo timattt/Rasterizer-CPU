@@ -41,6 +41,14 @@ int CreateTexture(int width, int height, char * pixs, txtr_p * dest) {
 	return 0;
 }
 
+int DestroyTexture(txtr_p txt) {
+	NOT_NULL(txt);
+
+	FreeGraphicalMemory(txt->pixels);
+
+	return 0;
+}
+
 float process(char c) {
 	int v = c;
 	v += 256;

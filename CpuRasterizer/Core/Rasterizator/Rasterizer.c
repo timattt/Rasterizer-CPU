@@ -1,7 +1,7 @@
 #include "CPURasterizerLocal.h"
 
 // Global variables
-grcntx_t currentContext;
+grcntx_t currentContext = {0};
 int errcode = 0;
 char errorMessage[ERROR_MESSAGE_LEN] = {0};
 
@@ -15,6 +15,15 @@ int FlushDepthBuffer() {
 	return 0;
 }
 
+int EnsureVBOComponent(int mask) {
+	if ((mask ^ currentContext.vbo_mask) != 0) {
+		return -1;
+	}
+	return 0;
+}
+
+// |1          |2    |4             |8     |...  |
+// |Vert coords|Color|Texture coords|Normal|Other|
 int CalcVertexSizeByMask() {
 	int res = 0;
 	if (currentContext.vbo_mask & VERTEX_COORDS) {
@@ -26,7 +35,15 @@ int CalcVertexSizeByMask() {
 	if (currentContext.vbo_mask & TEXTURE_COORDS) {
 		res += 2 * sizeof(float);
 	}
+	if (currentContext.vbo_mask & NORMAL) {
+		res += 3 * sizeof(float);
+	}
+	res += (currentContext.vbo_mask >> DEFAULT_ATTRIBUTES_QUANTITY) * sizeof(float);
 	return res;
+}
+
+int AdditionalVertexDataMask(int quant) {
+	return quant << DEFAULT_ATTRIBUTES_QUANTITY;
 }
 
 int SetFrameBufferCallFunction(int (*frameBufferSetPixel)(int, int, int, int, int)) {
@@ -74,7 +91,7 @@ int SetModelMatrix(mat4f_t model) {
 	return 0;
 }
 
-int SetProjectionMaxtrix(mat4f_t proj) {
+int SetProjectionMatrix(mat4f_t proj) {
 	currentContext.projectionMatrix = proj;
 	return 0;
 }
@@ -94,8 +111,8 @@ int InitContext() {
 	ENSURE(currentContext.depthBuffer == NULL);
 	ENSURE(currentContext.graphicalMemory == NULL);
 
-	currentContext.depthBuffer = malloc(WIDTH * HEIGHT * sizeof(float));
-	currentContext.graphicalMemory = malloc(MAX_GRAPHICAL_MEMORY_SIZE);
+	currentContext.depthBuffer = (float*)malloc(WIDTH * HEIGHT * sizeof(float));
+	currentContext.graphicalMemory = (char*)malloc(MAX_GRAPHICAL_MEMORY_SIZE);
 	currentContext.emptyMem = currentContext.graphicalMemory;
 
 	ENSURE(currentContext.depthBuffer && currentContext.graphicalMemory);
@@ -128,6 +145,7 @@ int SetDepth(int x, int y, float val) {
 
 float GetDepth(int x, int y) {
 	NOT_NULL(currentContext.depthBuffer);
+	ENSURE(x >= -WIDTH / 2 && y >= -HEIGHT / 2 && x < WIDTH / 2 && y < HEIGHT / 2);
 	return currentContext.depthBuffer[((x + WIDTH / 2) + (HEIGHT / 2 - y) * HEIGHT)];
 }
 
@@ -175,6 +193,13 @@ int SetShaderProgram(int (*vertexShader)(float * in, float * out), int (*fragmen
 
 	currentContext.vertexShader = vertexShader;
 	currentContext.fragmentShader = fragmentShader;
+
+	return 0;
+}
+
+int ResetShaderProgram() {
+	currentContext.vertexShader = NULL;
+	currentContext.fragmentShader = NULL;
 
 	return 0;
 }

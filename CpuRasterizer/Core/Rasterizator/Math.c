@@ -9,6 +9,23 @@ vec4f_t Mul_mat4f_vec4f(mat4f_t mat, vec4f_t vec) {
 	return res;
 }
 
+vec4f_t Mul_vec4f_vec4f(vec4f_t a, vec4f_t b) {
+	vec4f_t c = {0};
+	c.x = a.x * b.x;
+	c.y = a.y * b.y;
+	c.z = a.z * b.z;
+	c.w = a.w * b.w;
+	return c;
+}
+
+vec3f_t Mul_vec3f_vec3f(vec3f_t a, vec3f_t b) {
+	vec3f_t c = {0};
+	c.x = a.x * b.x;
+	c.y = a.y * b.y;
+	c.z = a.z * b.z;
+	return c;
+}
+
 mat4f_t CreateYrotation_mat4f(float angle) {
 	mat4f_t res = {0};
 
@@ -23,6 +40,35 @@ mat4f_t CreateYrotation_mat4f(float angle) {
 	res.mat[0][2] = sin_;
 
 	res.mat[3][3] = 1;
+
+	return res;
+}
+
+mat4f_t CreateZrotation_mat4f(float angle) {
+	mat4f_t res = {0};
+
+	float cos_ = cos(angle);
+	float sin_ = sin(angle);
+
+	res.mat[0][0] = cos_;
+	res.mat[1][1] = cos_;
+	res.mat[2][2] = 1;
+
+	res.mat[1][0] = sin_;
+	res.mat[0][1] = -sin_;
+
+	res.mat[3][3] = 1;
+
+	return res;
+}
+
+vec3f_t Normalize_vec3f(vec3f_t v) {
+	vec3f_t res = {0};
+
+	float a = pow(v.x * v.x + v.y * v.y + v.z * v.z, 0.5);
+	res.x = v.x / a;
+	res.y = v.y / a;
+	res.z = v.z / a;
 
 	return res;
 }
@@ -98,7 +144,7 @@ mat4f_t CreateProjection_mat4f(float fow, float aspect, float n, float f) {
 	return res;
 }
 
-float Dot_vec3f(vec3f_t a, vec3f_t b) {
+float Dot_vec3f_vec3f(vec3f_t a, vec3f_t b) {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
@@ -110,10 +156,10 @@ int Print_mat4f(mat4f_t mat) {
 }
 
 float Abs_vec3f(vec3f_t a) {
-	return sqrt(Dot_vec3f(a, a));
+	return sqrt(Dot_vec3f_vec3f(a, a));
 }
 
-vec3f_t Cross_vec3f(vec3f_t a, vec3f_t b) {
+vec3f_t Cross_vec3f_vec3f(vec3f_t a, vec3f_t b) {
 	vec3f_t res = {0};
 
 	res.x = a.y * b.z - a.z * b.y;
@@ -123,7 +169,7 @@ vec3f_t Cross_vec3f(vec3f_t a, vec3f_t b) {
 	return res;
 }
 
-vec3f_t Add_vec3f(vec3f_t a, vec3f_t b) {
+vec3f_t Add_vec3f_vec3f(vec3f_t a, vec3f_t b) {
 	vec3f_t res = {0};
 	res.x = a.x + b.x;
 	res.y = a.y + b.y;
@@ -131,7 +177,7 @@ vec3f_t Add_vec3f(vec3f_t a, vec3f_t b) {
 	return res;
 }
 
-vec3f_t Sub_vec3f(vec3f_t a, vec3f_t b) {
+vec3f_t Sub_vec3f_vec3f(vec3f_t a, vec3f_t b) {
 	vec3f_t res = {0};
 
 	res.x = a.x - b.x;
@@ -149,33 +195,33 @@ vec3f_t Neg_vec3f(vec3f_t a) {
 	return res;
 }
 
-float Square_vec3f(vec3f_t a, vec3f_t b, vec3f_t c) {
+float Square_vec3f_vec3f_vec3f(vec3f_t a, vec3f_t b, vec3f_t c) {
 	float res = 0;
 
-	vec3f_t p = Sub_vec3f(a, c);
-	vec3f_t q = Sub_vec3f(b, c);
+	vec3f_t p = Sub_vec3f_vec3f(a, c);
+	vec3f_t q = Sub_vec3f_vec3f(b, c);
 
-	vec3f_t n = Cross_vec3f(p, q);
+	vec3f_t n = Cross_vec3f_vec3f(p, q);
 	res = Abs_vec3f(n) / 2.0f;
 
 	return res;
 }
 
-vec2f_t Add_vec2f(vec2f_t a, vec2f_t b) {
+vec2f_t Add_vec2f_vec2f(vec2f_t a, vec2f_t b) {
 	vec2f_t v = {0};
 	v.x = a.x + b.x;
 	v.y = a.y + b.y;
 	return v;
 }
 
-vec2f_t Mul_vec2f(vec2f_t a, float f) {
+vec2f_t Mul_vec2f_f(vec2f_t a, float f) {
 	vec2f_t v = {0};
 	v.x = a.x * f;
 	v.y = a.y * f;
 	return v;
 }
 
-vec3f_t Mul_vec3f(vec3f_t a, float f) {
+vec3f_t Mul_vec3f_f(vec3f_t a, float f) {
 	vec3f_t res = {0};
 	res.x = a.x * f;
 	res.y = a.y * f;
@@ -183,7 +229,7 @@ vec3f_t Mul_vec3f(vec3f_t a, float f) {
 	return res;
 }
 
-vec4f_t Add_vec4f(vec4f_t a, vec4f_t b) {
+vec4f_t Add_vec4f_vec4f(vec4f_t a, vec4f_t b) {
 	vec4f_t res = {0};
 	res.x = a.x + b.x;
 	res.y = a.y + b.y;
@@ -192,7 +238,7 @@ vec4f_t Add_vec4f(vec4f_t a, vec4f_t b) {
 	return res;
 }
 
-vec4f_t Mul_vec4f(vec4f_t a, float f) {
+vec4f_t Mul_vec4f_f(vec4f_t a, float f) {
 	vec4f_t res = {0};
 	res.x = a.x * f;
 	res.y = a.y * f;

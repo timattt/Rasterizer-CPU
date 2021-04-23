@@ -6,21 +6,21 @@
 // Local methods
 //=================================================
 vec4f_t traversal_interpolate_4f(vec4f_t a1, vec4f_t a2, vec4f_t a3, float z_1, float z_2, float z_3, float s1, float s2, float s3) {
-	vec4f_t A_z = Add_vec4f(Add_vec4f(Mul_vec4f(a1, s1 * z_1), Mul_vec4f(a2, s2 * z_2)), Mul_vec4f(a3, s3 * z_3));
+	vec4f_t A_z = Add_vec4f_vec4f(Add_vec4f_vec4f(Mul_vec4f_f(a1, s1 * z_1), Mul_vec4f_f(a2, s2 * z_2)), Mul_vec4f_f(a3, s3 * z_3));
 	float z_ = 1.0f/(s1 * z_1 + s2 * z_2 + s3 * z_3);
-	return Mul_vec4f(A_z, z_);
+	return Mul_vec4f_f(A_z, z_);
 }
 
 vec3f_t traversal_interpolate3f(vec3f_t a1, vec3f_t a2, vec3f_t a3, float z_1, float z_2, float z_3, float s1, float s2, float s3) {
-	vec3f_t A_z = Add_vec3f(Add_vec3f(Mul_vec3f(a1, s1 * z_1), Mul_vec3f(a2, s2 * z_2)), Mul_vec3f(a3, s3 * z_3));
+	vec3f_t A_z = Add_vec3f_vec3f(Add_vec3f_vec3f(Mul_vec3f_f(a1, s1 * z_1), Mul_vec3f_f(a2, s2 * z_2)), Mul_vec3f_f(a3, s3 * z_3));
 	float z_ = 1.0f/(s1 * z_1 + s2 * z_2 + s3 * z_3);
-	return Mul_vec3f(A_z, z_);
+	return Mul_vec3f_f(A_z, z_);
 }
 
 vec2f_t traversal_interpolate_2f(vec2f_t a1, vec2f_t a2, vec2f_t a3, float z_1, float z_2, float z_3, float s1, float s2, float s3) {
-	vec2f_t A_z = Add_vec2f(Add_vec2f(Mul_vec2f(a1, s1 * z_1), Mul_vec2f(a2, s2 * z_2)), Mul_vec2f(a3, s3 * z_3));
+	vec2f_t A_z = Add_vec2f_vec2f(Add_vec2f_vec2f(Mul_vec2f_f(a1, s1 * z_1), Mul_vec2f_f(a2, s2 * z_2)), Mul_vec2f_f(a3, s3 * z_3));
 	float z_ = 1.0f/(s1 * z_1 + s2 * z_2 + s3 * z_3);
-	return Mul_vec2f(A_z, z_);
+	return Mul_vec2f_f(A_z, z_);
 }
 
 float traversal_interpolate_f(float a1, float a2, float a3, float z_1, float z_2, float z_3, float s1, float s2, float s3) {
@@ -33,9 +33,9 @@ int FragmentStage(grcntx_p cnt, float * in) {
 	NOT_NULL(cnt);
 	NOT_NULL(in);
 
-	float * v1 = in + 0 * SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4;
-	float * v2 = in + 1 * SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4;
-	float * v3 = in + 2 * SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4;
+	float * v1 = in + 0 * STAGES_TRANSFER_BUFFER_SIZE / 4;
+	float * v2 = in + 1 * STAGES_TRANSFER_BUFFER_SIZE / 4;
+	float * v3 = in + 2 * STAGES_TRANSFER_BUFFER_SIZE / 4;
 
 	vec4f_p a4_p = (vec4f_t *)v1;
 	vec4f_p b4_p = (vec4f_t *)v2;
@@ -67,13 +67,13 @@ int FragmentStage(grcntx_p cnt, float * in) {
 	float miny = MIN3(a3.y, b3.y, c3.y);
 	float maxy = MAX3(a3.y, b3.y, c3.y);
 
-	int MINX = minx * WIDTH / 2 - 1;
-	int MAXX = maxx * WIDTH / 2 + 1;
-	int MINY = miny * HEIGHT / 2 - 1;
-	int MAXY = maxy * HEIGHT / 2 + 1;
+	int MINX = MAX2(minx * WIDTH / 2 - 1, -WIDTH / 2);
+	int MAXX = MIN2(maxx * WIDTH / 2 + 1, WIDTH / 2 - 1);
+	int MINY = MAX2(miny * HEIGHT / 2 - 1, -HEIGHT / 2);
+	int MAXY = MIN2(maxy * HEIGHT / 2 + 1, HEIGHT / 2 - 1);
 
 	// Attribs
-	float attribs[SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4] = { 0 };
+	float attribs[STAGES_TRANSFER_BUFFER_SIZE / 4] = { 0 };
 
 	for (int x = MINX; x < MAXX; x++) {
 		for (int y = MINY; y < MAXY; y++) {
@@ -102,7 +102,7 @@ int FragmentStage(grcntx_p cnt, float * in) {
 					(((cur.x - c3.x)*(a3.y-c3.y)-(cur.y-c3.y)*(a3.x-c3.x))*((b3.x - c3.x)*(a3.y-c3.y)-(b3.y-c3.y)*(a3.x-c3.x)) >= 0)) {
 
 				// Interpolation
-				for (int i = 0; i < SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE / 4; i++) {
+				for (int i = 0; i < STAGES_TRANSFER_BUFFER_SIZE / 4; i++) {
 					float * curAtr = attribs + i;
 					*curAtr = traversal_interpolate_f(v1[i], v2[i], v3[i], za, zb, zc, s1, s2, s3);
 				}
@@ -132,11 +132,11 @@ int FragmentStage(grcntx_p cnt, float * in) {
 
 					// Texture
 					//--------------------------------------------------------------------
-					color = Add_vec4f(color, GetPixel_vec2f(cnt->texture, *txc_p));
+					color = Add_vec4f_vec4f(color, GetPixel_vec2f(cnt->texture, *txc_p));
 					//--------------------------------------------------------------------
 				}
 
-				color = Mul_vec4f(color, 254.0f);
+				color = Mul_vec4f_f(color, 254.0f);
 
 				cnt->frameBufferSetPixel(x, y, color.x, color.y, color.z);
 			}

@@ -6,6 +6,7 @@ int fixedPipeLine(grcntx_p cnt, float * in, float * out) {
 	NOT_NULL(in);
 	NOT_NULL(out);
 	NOT_NULL(cnt);
+	ENSURE(EnsureVBOComponent(VERTEX_COORDS | COLOR | TEXTURE_COORDS) != -1);
 
 	// matrices
 	mat4f_t proj = cnt->projectionMatrix;
@@ -53,17 +54,16 @@ int fixedPipeLine(grcntx_p cnt, float * in, float * out) {
 int VertexStage(grcntx_p cnt, int total_prim) {
 	NOT_NULL(cnt);
 	NOT_NULL(cnt->vbo);
-	ENSURE(cnt->vbo_mask & VERTEX_COORDS);
 
 	// vbo
-	int vertSize = CalcVertexSizeByMask(cnt->vbo_mask);
+	int vertSize = CalcVertexSizeByMask();
 
 	// Transfer buffer
-	char transfer[VERTICES_PER_PRIMITIVE * SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE] = { 0 };
+	char transfer[VERTICES_PER_PRIMITIVE * STAGES_TRANSFER_BUFFER_SIZE] = { 0 };
 
 	for (int currentVertex = 0; currentVertex < total_prim; currentVertex++) {
 		char *in = cnt->vbo + currentVertex * vertSize;
-		char *out = transfer + (currentVertex % VERTICES_PER_PRIMITIVE) * SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE;
+		char *out = transfer + (currentVertex % VERTICES_PER_PRIMITIVE) * STAGES_TRANSFER_BUFFER_SIZE;
 
 		// SHADER PROGRAM
 		if (currentContext.vertexShader != NULL) {
@@ -72,10 +72,9 @@ int VertexStage(grcntx_p cnt, int total_prim) {
 			fixedPipeLine(cnt, (float*) in, (float*) out);
 		}
 
-
 		if ((currentVertex + 1) % VERTICES_PER_PRIMITIVE == 0) {
 			FragmentStage(cnt, (float*) transfer);
-			memset(transfer, 0, 3 * SHADER_PROGRAM_MAX_VERTEX_BUFFER_SIZE);
+			memset(transfer, 0, 3 * STAGES_TRANSFER_BUFFER_SIZE);
 		}
 	}
 

@@ -1,4 +1,4 @@
-#include "../GUITest/TestWindow.h"
+#include "TestWindow.h"
 
 // Local variables
 char pixs[4 * WIDTH * HEIGHT] = { 0 };
@@ -148,7 +148,7 @@ int loadTexture(char *path, txtr_p *res) {
 
 	int width = bitmap.bmWidth;
 	int height = bitmap.bmHeight;
-	char * pixels = malloc(4 * width * height);
+	char * pixels = (char*)malloc(4 * width * height);
 	memset(pixels, 0, 4 * width * height);
 
 	BITMAPINFO bmpinfo = { 0 };

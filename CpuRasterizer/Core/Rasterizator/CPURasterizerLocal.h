@@ -4,9 +4,9 @@
 
 // Errors handle
 //=================================================
-int errcode;
+extern int errcode;
 #define ERROR_MESSAGE_LEN 10000
-char errorMessage[ERROR_MESSAGE_LEN];
+extern char errorMessage[ERROR_MESSAGE_LEN];
 #define NULL_ERR_CODE 1
 #define BAD_ARGS_ERR_CODE 2
 #ifdef DEBUG
@@ -23,6 +23,9 @@ char errorMessage[ERROR_MESSAGE_LEN];
 
 // Includes
 //=================================================
+#include <assimp/cimport.h>        // Plain-C interface
+#include <assimp/scene.h>          // Output data structure
+#include <assimp/postprocess.h>    // Post processing flags
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -55,7 +58,7 @@ struct Texture {
 	char * pixels;
 };
 // Context
-struct GraphicalContext {
+extern struct GraphicalContext {
 	// decoding
 	char vbo_mask;
 
