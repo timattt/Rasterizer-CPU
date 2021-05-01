@@ -60,4 +60,4 @@ Shader toy - программа для тестирования простых �
 Хорошее видео [тут](https://www.youtube.com/watch?v=PGtv-dBi2wE&list=LL&index=7&ab_channel=TheArtofCode), и [тут](https://www.youtube.com/watch?v=Ff0jJyyiVyw&ab_channel=TheArtofCode), и [тут](https://www.youtube.com/watch?v=AfKGMUDWfuE&ab_channel=TheArtofCode).
 А вот [тут](https://www.shadertoy.com/view/ssBXzw) мой мини-шейдер.
 
-
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/about/RAY_MARCHING_EXAMPLE.gif)
