@@ -52,5 +52,12 @@ You can find english version of this README [here](https://github.com/timattt/Co
 Логика следующая: код делится на две части - сам растеризатор и системное окно для тестирования.
 Код написан таким образом, что растеризатор можно легко имплементировать на любую систему, достаточно указать функцию для прорисовки пикселя и вызывать необходимые прорисовочные функции.
 
+# Shader toy
+Shader toy - программа для тестирования простых шейдоров на glsl.
+Хорошее видео [тут](https://www.youtube.com/watch?v=u5HAYVHsasc&ab_channel=TheArtofCodeTheArtofCode)
+
+# Ray marching
+Хорошее видео [тут](https://www.youtube.com/watch?v=PGtv-dBi2wE&list=LL&index=7&ab_channel=TheArtofCode), и [тут](https://www.youtube.com/watch?v=Ff0jJyyiVyw&ab_channel=TheArtofCode), и [тут](https://www.youtube.com/watch?v=AfKGMUDWfuE&ab_channel=TheArtofCode).
+А вот [тут](https://www.shadertoy.com/view/ssBXzw) мой мини-шейдер.
 
 
