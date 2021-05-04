@@ -2,6 +2,8 @@
 Этот репозиторий содержит теорминимумы и проекты по следующим разделам информатики: операционные системы, 3D графика.
 Проекты, представленные здесь: процессорный растеризатор. 
 
+Хорошая книга по графике [тут](https://drive.google.com/file/d/1Lv1zbpjWPlhq8kvIf6lOIHLKNXTcEg9V/view?usp=sharing)
+
 # English version
 You can find english version of this README [here](https://github.com/timattt/Computer-science-knowledge/blob/master/README_EN.md)
 
@@ -61,3 +63,7 @@ Shader toy - программа для тестирования простых �
 А вот [тут](https://www.shadertoy.com/view/ssBXzw) мой мини-шейдер.
 
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/about/RAY_MARCHING_EXAMPLE.gif)
+
+# Cube marching
+
+Хорошая статья [тут](https://m.habr.com/ru/post/358658/)
