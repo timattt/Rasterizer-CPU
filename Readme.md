@@ -18,10 +18,10 @@ You can find english version of this README [here](https://github.com/timattt/Pr
 Буфер экрана предоставляется ОС. В данном случае используем winapi.
 
 ## Пример
-![](https://github.com/timattt/Project-fundamental-graphics/blob/master/Project-fundamental-graphics/about/NiceExample.gif)
+![](https://github.com/timattt/Project-fundamental-graphics/blob/master/CpuRasterizer/about/NiceExample.gif)
 
 ## Более сложный пример
-![](https://github.com/timattt/Project-fundamental-graphics/blob/master/Project-fundamental-graphics/about/FINAL_EXAMPLE.gif)
+![](https://github.com/timattt/Project-fundamental-graphics/blob/master/CpuRasterizer/about/FINAL_EXAMPLE.gif)
 
 ## Теорминимум
 
