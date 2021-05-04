@@ -4,10 +4,10 @@
 Хорошая книга по графике [тут](https://drive.google.com/file/d/1Lv1zbpjWPlhq8kvIf6lOIHLKNXTcEg9V/view?usp=sharing)
 
 # English version
-You can find english version of this README [here](https://github.com/timattt/Computer-science-knowledge/blob/master/README_EN.md)
+You can find english version of this README [here](https://github.com/timattt/Project-fundamental-graphics/blob/master/README_EN.md)
 
 # Схема задач из этого репозитория
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/about/SYNOPSIS_SCHEME.png)
+![](https://github.com/timattt/Project-fundamental-graphics/blob/master/about/SYNOPSIS_SCHEME.png)
 
 # Растеризатор на CPU
 
@@ -18,10 +18,10 @@ You can find english version of this README [here](https://github.com/timattt/Co
 Буфер экрана предоставляется ОС. В данном случае используем winapi.
 
 ## Пример
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/Project-fundamental-graphics/about/NiceExample.gif)
+![](https://github.com/timattt/Project-fundamental-graphics/blob/master/Project-fundamental-graphics/about/NiceExample.gif)
 
 ## Более сложный пример
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/Project-fundamental-graphics/about/FINAL_EXAMPLE.gif)
+![](https://github.com/timattt/Project-fundamental-graphics/blob/master/Project-fundamental-graphics/about/FINAL_EXAMPLE.gif)
 
 ## Теорминимум
 
