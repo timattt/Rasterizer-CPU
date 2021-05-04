@@ -3,9 +3,6 @@
 
 Хорошая книга по графике [тут](https://drive.google.com/file/d/1Lv1zbpjWPlhq8kvIf6lOIHLKNXTcEg9V/view?usp=sharing)
 
-# English version
-You can find english version of this README [here](https://github.com/timattt/Project-fundamental-graphics/blob/master/README_EN.md)
-
 # Схема задач из этого репозитория
 ![](https://github.com/timattt/Project-fundamental-graphics/blob/master/about/SYNOPSIS_SCHEME.png)
 
