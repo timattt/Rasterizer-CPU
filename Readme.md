@@ -1,13 +1,12 @@
-# Фундаментальное изучение ЭВМ
-Этот репозиторий содержит теорминимумы и проекты по следующим разделам информатики: операционные системы, 3D графика.
-Проекты, представленные здесь: процессорный растеризатор. 
+# Фундаментальное изучение компьютерной графики
+Этот репозиторий содержит теорминимумы и проекты по 3D графике.
 
 Хорошая книга по графике [тут](https://drive.google.com/file/d/1Lv1zbpjWPlhq8kvIf6lOIHLKNXTcEg9V/view?usp=sharing)
 
 # English version
 You can find english version of this README [here](https://github.com/timattt/Computer-science-knowledge/blob/master/README_EN.md)
 
-# Схема задач из этого репозитория по 3D графике
+# Схема задач из этого репозитория
 ![](https://github.com/timattt/Computer-science-knowledge/blob/master/about/SYNOPSIS_SCHEME.png)
 
 # Растеризатор на CPU
@@ -19,10 +18,10 @@ You can find english version of this README [here](https://github.com/timattt/Co
 Буфер экрана предоставляется ОС. В данном случае используем winapi.
 
 ## Пример
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/NiceExample.gif)
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/Project-fundamental-graphics/about/NiceExample.gif)
 
 ## Более сложный пример
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/CpuRasterizer/about/FINAL_EXAMPLE.gif)
+![](https://github.com/timattt/Computer-science-knowledge/blob/master/Project-fundamental-graphics/about/FINAL_EXAMPLE.gif)
 
 ## Теорминимум
 
@@ -62,7 +61,7 @@ Shader toy - программа для тестирования простых �
 Хорошее видео [тут](https://www.youtube.com/watch?v=PGtv-dBi2wE&list=LL&index=7&ab_channel=TheArtofCode), и [тут](https://www.youtube.com/watch?v=Ff0jJyyiVyw&ab_channel=TheArtofCode), и [тут](https://www.youtube.com/watch?v=AfKGMUDWfuE&ab_channel=TheArtofCode).
 А вот [тут](https://www.shadertoy.com/view/ssBXzw) мой мини-шейдер.
 
-![](https://github.com/timattt/Computer-science-knowledge/blob/master/about/RAY_MARCHING_EXAMPLE.gif)
+![](https://github.com/timattt/Project-fundamental-graphics/blob/master/about/RAY_MARCHING_EXAMPLE.gif)
 
 # Cube marching
 
