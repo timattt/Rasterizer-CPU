@@ -88,6 +88,7 @@ Shader toy - программа для тестирования простых �
 
 # Рендеринг по монтекарло
 Хорошее видео [тут](https://www.youtube.com/watch?v=FUZJNlRqrAc)
+Хорошая статья [тут](https://blog.demofox.org/2020/05/25/casual-shadertoy-path-tracing-1-basic-camera-diffuse-emissive/)
 
 ## Постановка задачи
 Нужно реализовать shader с path tracing.
