@@ -72,7 +72,7 @@ Shader toy - программа для тестирования простых �
 Хорошая статья [тут](https://m.habr.com/ru/post/358658/)
 
 # Volumetric clouds
-Хорошая статья [тут](https://shaderbits.com/blog/creating-volumetric-ray-marcher)
+Хорошая статья [тут](https://shaderbits.com/blog/creating-volumetric-ray-marcher) и [тут](https://habr.com/ru/post/342906/)
 
 ## Постановка задачи
 Нужно реализовать shader с облаками.
