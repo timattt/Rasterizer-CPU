@@ -71,7 +71,7 @@ Shader toy - программа для тестирования простых �
 # Cube marching
 Хорошая статья [тут](https://m.habr.com/ru/post/358658/)
 
-# Volumetric clouds
+# Volumetric clouds + шумы
 Хорошая статья [тут](https://shaderbits.com/blog/creating-volumetric-ray-marcher) и [тут](https://habr.com/ru/post/342906/)
 
 ## Постановка задачи
