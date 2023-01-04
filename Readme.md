@@ -8,6 +8,7 @@
 
 ## Реализация
 Смотрите папку CpuRasterizer в этом репозитории.
+Там есть cmake. Все как обычно.
 
 ## Пример
 ![](https://github.com/timattt/Project-fundamental-graphics/blob/master/CpuRasterizer/about/NiceExample.gif)
